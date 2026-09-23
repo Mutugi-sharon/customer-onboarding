@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Customer Registration</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <h1>Customer Registration</h1>
+
+    <p>Please fill in your details to create an account.</p>
+
+    <form>
+      <label for="fullname">Full Name:</label>
+      <input
+        type="text"
+        id="fullname"
+        name="fullname"
+        placeholder="Enter your full name"
+        required
+      />
+
+      <br /><br />
+
+      <label for="email">Email Address:</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Enter your email"
+        required
+      />
+
+      <br /><br />
+
+      <label for="phone">Phone Number:</label>
+      <input
+        type="tel"
+        id="phone"
+        name="phone"
+        placeholder="07XXXXXXXX"
+        required
+      />
+
+      <br /><br />
+
+      <label for="idnumber">ID Number:</label>
+      <input
+        type="text"
+        id="idnumber"
+        name="idnumber"
+        placeholder="Enter your ID number"
+        required
+      />
+
+      <br /><br />
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob" required />
+
+      <br /><br />
+
+      <label>Gender:</label>
+
+      <input type="radio" id="male" name="gender" value="male" />
+      <label for="male">Male</label>
+
+      <input type="radio" id="female" name="gender" value="female" />
+      <label for="female">Female</label>
+
+      <br /><br />
+
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Create a password"
+        required
+      />
+
+      <br /><br />
+
+      <label for="confirm-password">Confirm Password:</label>
+      <input
+        type="password"
+        id="confirm-password"
+        name="confirm-password"
+        placeholder="Confirm your password"
+        required
+      />
+
+      <br /><br />
+
+      <input type="checkbox" id="terms" required />
+      <label for="terms">I agree to the terms and conditions.</label>
+
+      <br /><br />
+
+      <button type="submit">Register</button>
+      <button type="reset">Clear</button>
+    </form>
+
+    <script src="script.js"></script>
+  </body>
+</html>
