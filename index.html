@@ -18,319 +18,330 @@
   </head>
 
   <body>
-    <!-- NAVIGATION -->
     <header class="navbar">
-      <div class="logo">
-        <span>KCB</span>
-        <small>Digital Onboarding</small>
-      </div>
+      <a href="index.html" class="brand">
+        <div class="brand-box">KCB</div>
+
+        <div>
+          <strong>Digital Onboarding</strong>
+          <small>Customer Portal</small>
+        </div>
+      </a>
 
       <nav>
         <a href="#home">Home</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="#why-kyc">KYC</a>
+        <a href="#process">How it works</a>
+        <a href="#kyc">KYC</a>
         <a href="#faq">FAQ</a>
       </nav>
 
-      <button class="login-btn" onclick="goToLogin()">
-        Existing Applicant
-      </button>
+      <a href="login.html" class="nav-login"> Existing Applicant </a>
     </header>
 
-    <!-- HERO -->
-    <section class="hero" id="home">
-      <div class="hero-content">
-        <span class="tag">DIGITAL ONBOARDING</span>
+    <main>
+      <!-- HERO -->
 
-        <h1>
-          Your banking journey
-          <span>starts here.</span>
-        </h1>
+      <section class="hero" id="home">
+        <div class="hero-content">
+          <span class="eyebrow">DIGITAL ONBOARDING</span>
 
-        <p>
-          Complete your application securely and conveniently from wherever you
-          are.
-        </p>
+          <h1>
+            Start your banking
+            <span>journey digitally.</span>
+          </h1>
 
-        <div class="hero-buttons">
-          <button class="primary-btn" onclick="startApplication()">
-            Start Application →
-          </button>
+          <p>
+            Create your applicant profile, complete your verification, and track
+            your application from one convenient platform.
+          </p>
 
-          <button
-            class="secondary-btn"
-            onclick="scrollToSection('how-it-works')"
-          >
-            Learn More
-          </button>
+          <div class="hero-actions">
+            <a href="register.html" class="btn-primary">
+              Start Application →
+            </a>
+
+            <a href="#process" class="btn-secondary"> Learn More </a>
+          </div>
+
+          <div class="trust-row">
+            <span>✓ Secure</span>
+            <span>✓ Simple</span>
+            <span>✓ Convenient</span>
+          </div>
         </div>
 
-        <div class="trust">
-          <span>✓ Secure</span>
-          <span>✓ Simple</span>
-          <span>✓ Convenient</span>
+        <div class="hero-visual">
+          <div class="dashboard-preview">
+            <div class="preview-top">
+              <span>Application</span>
+              <span class="status-badge">In Progress</span>
+            </div>
+
+            <h3>Welcome to your onboarding</h3>
+
+            <div class="progress-info">
+              <span>Application progress</span>
+              <strong>25%</strong>
+            </div>
+
+            <div class="progress-bar">
+              <div></div>
+            </div>
+
+            <div class="preview-step completed">
+              <span>✓</span>
+              <div>
+                <strong>Profile created</strong>
+                <small>Completed</small>
+              </div>
+            </div>
+
+            <div class="preview-step">
+              <span>2</span>
+              <div>
+                <strong>Identity verification</strong>
+                <small>Next step</small>
+              </div>
+            </div>
+
+            <div class="preview-step">
+              <span>3</span>
+              <div>
+                <strong>Application review</strong>
+                <small>Pending</small>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="hero-image">
-        <img
-          src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=80"
-          alt="Digital banking"
-        />
+      <!-- QUICK CARDS -->
 
-        <div class="floating-card">
-          <div class="check-icon">✓</div>
+      <section class="quick-section">
+        <div class="quick-card">
+          <div class="quick-icon">01</div>
 
           <div>
-            <strong>Secure Verification</strong>
-            <p>Your information is protected</p>
+            <span>NEW APPLICANT</span>
+            <h3>Create an application</h3>
+            <p>Begin your digital onboarding journey.</p>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- QUICK START -->
-    <section class="quick-section">
-      <div class="quick-card">
-        <div class="quick-icon">👤</div>
-
-        <div>
-          <h3>New Applicant?</h3>
-          <p>Create your account and begin your onboarding.</p>
+          <a href="register.html">Start →</a>
         </div>
 
-        <button onclick="startApplication()">Register →</button>
-      </div>
-
-      <div class="quick-card">
-        <div class="quick-icon">🔐</div>
-
-        <div>
-          <h3>Already Registered?</h3>
-          <p>Continue your application where you left off.</p>
-        </div>
-
-        <button onclick="goToLogin()">Login →</button>
-      </div>
-    </section>
-
-    <!-- HOW IT WORKS -->
-    <section class="section" id="how-it-works">
-      <div class="section-heading">
-        <span>THE PROCESS</span>
-
-        <h2>How it works</h2>
-
-        <p>
-          Getting started is simple. Complete these steps to finish your digital
-          onboarding.
-        </p>
-      </div>
-
-      <div class="steps">
-        <div class="step-card">
-          <div class="step-number">01</div>
-
-          <div class="step-icon">📝</div>
-
-          <h3>Register</h3>
-
-          <p>Provide your basic details and create your applicant profile.</p>
-        </div>
-
-        <div class="step-card">
-          <div class="step-number">02</div>
-
-          <div class="step-icon">🪪</div>
-
-          <h3>Verify</h3>
-
-          <p>Provide the required identification and personal information.</p>
-        </div>
-
-        <div class="step-card">
-          <div class="step-number">03</div>
-
-          <div class="step-icon">📤</div>
-
-          <h3>Submit</h3>
-
-          <p>Review your information and submit your application.</p>
-        </div>
-
-        <div class="step-card">
-          <div class="step-number">04</div>
-
-          <div class="step-icon">✅</div>
-
-          <h3>Track</h3>
-
-          <p>Log in to your dashboard and monitor your application status.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- KYC -->
-    <section class="kyc-section" id="why-kyc">
-      <div class="kyc-image">
-        <img
-          src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=900&q=80"
-          alt="Customer verification"
-        />
-      </div>
-
-      <div class="kyc-content">
-        <span>KNOW YOUR CUSTOMER</span>
-
-        <h2>Why is KYC important?</h2>
-
-        <p>
-          KYC helps verify customer information and supports secure and
-          responsible banking services.
-        </p>
-
-        <div class="kyc-points">
-          <div>
-            <strong>✓ Identity verification</strong>
-            <p>Confirm your identity using the required documents.</p>
-          </div>
+        <div class="quick-card">
+          <div class="quick-icon">02</div>
 
           <div>
-            <strong>✓ Account security</strong>
-            <p>Help protect your account and personal information.</p>
+            <span>EXISTING APPLICANT</span>
+            <h3>Continue application</h3>
+            <p>Return to your application dashboard.</p>
           </div>
 
-          <div>
-            <strong>✓ Faster onboarding</strong>
-            <p>Complete your application digitally and conveniently.</p>
+          <a href="login.html">Login →</a>
+        </div>
+      </section>
+
+      <!-- PROCESS -->
+
+      <section class="content-section" id="process">
+        <div class="section-heading">
+          <span class="eyebrow">THE PROCESS</span>
+
+          <h2>Onboarding made simple</h2>
+
+          <p>Complete your application through a few straightforward steps.</p>
+        </div>
+
+        <div class="process-grid">
+          <div class="process-card">
+            <span>01</span>
+
+            <div class="process-icon">👤</div>
+
+            <h3>Create profile</h3>
+
+            <p>
+              Provide your basic information and create your applicant profile.
+            </p>
+          </div>
+
+          <div class="process-card">
+            <span>02</span>
+
+            <div class="process-icon">🪪</div>
+
+            <h3>Verify identity</h3>
+
+            <p>
+              Provide the identification information required for verification.
+            </p>
+          </div>
+
+          <div class="process-card">
+            <span>03</span>
+
+            <div class="process-icon">📋</div>
+
+            <h3>Review</h3>
+
+            <p>Check your information before submitting your application.</p>
+          </div>
+
+          <div class="process-card">
+            <span>04</span>
+
+            <div class="process-icon">📊</div>
+
+            <h3>Track</h3>
+
+            <p>Use your dashboard to monitor your application progress.</p>
           </div>
         </div>
+      </section>
 
-        <button class="primary-btn" onclick="startApplication()">
-          Start KYC →
-        </button>
-      </div>
-    </section>
+      <!-- KYC -->
 
-    <!-- DOCUMENTS -->
-    <section class="documents">
-      <div class="section-heading">
-        <span>GET READY</span>
+      <section class="kyc-section" id="kyc">
+        <div class="kyc-content">
+          <span class="eyebrow">KNOW YOUR CUSTOMER</span>
 
-        <h2>What you may need</h2>
+          <h2>Why identity verification matters</h2>
 
-        <p>
-          Have the required information ready before beginning your application.
-        </p>
-      </div>
+          <p>
+            KYC helps financial institutions verify customer information and
+            maintain a secure onboarding process.
+          </p>
 
-      <div class="document-grid">
-        <div class="document-card">
-          <div>🪪</div>
-          <h3>Identification</h3>
-          <p>Valid identification information.</p>
+          <div class="kyc-list">
+            <div>
+              <strong>✓ Identity verification</strong>
+              <p>Confirm applicant information.</p>
+            </div>
+
+            <div>
+              <strong>✓ Account security</strong>
+              <p>Support a safer customer experience.</p>
+            </div>
+
+            <div>
+              <strong>✓ Digital convenience</strong>
+              <p>Complete onboarding without unnecessary paperwork.</p>
+            </div>
+          </div>
+
+          <a href="register.html" class="btn-light"> Begin verification → </a>
         </div>
 
-        <div class="document-card">
-          <div>📱</div>
-          <h3>Phone Number</h3>
-          <p>An active mobile number.</p>
-        </div>
+        <div class="kyc-card">
+          <div class="secure-icon">✓</div>
 
-        <div class="document-card">
-          <div>📧</div>
-          <h3>Email Address</h3>
-          <p>An active email address.</p>
-        </div>
+          <h3>Verification Center</h3>
 
-        <div class="document-card">
-          <div>🏠</div>
-          <h3>Personal Details</h3>
-          <p>Basic residential and personal information.</p>
-        </div>
-      </div>
-    </section>
+          <p>Your application information is organized in one place.</p>
 
-    <!-- FAQ -->
-    <section class="section faq-section" id="faq">
-      <div class="section-heading">
-        <span>QUESTIONS</span>
+          <div class="verification-item">
+            <span>Personal details</span>
+            <strong>Ready</strong>
+          </div>
 
-        <h2>Frequently Asked Questions</h2>
-      </div>
+          <div class="verification-item">
+            <span>Identification</span>
+            <strong>Pending</strong>
+          </div>
 
-      <div class="faq-container">
-        <div class="faq">
-          <button onclick="toggleFAQ(this)">
-            What is digital onboarding?
-            <span>+</span>
-          </button>
-
-          <div class="faq-answer">
-            Digital onboarding allows applicants to provide their information
-            and complete an application electronically.
+          <div class="verification-item">
+            <span>Application review</span>
+            <strong>Pending</strong>
           </div>
         </div>
+      </section>
 
-        <div class="faq">
-          <button onclick="toggleFAQ(this)">
-            What is KYC?
-            <span>+</span>
-          </button>
+      <!-- FAQ -->
 
-          <div class="faq-answer">
-            KYC means Know Your Customer. It is the process of verifying
-            customer identity and information.
-          </div>
+      <section class="content-section" id="faq">
+        <div class="section-heading">
+          <span class="eyebrow">FAQ</span>
+
+          <h2>Frequently asked questions</h2>
         </div>
 
-        <div class="faq">
-          <button onclick="toggleFAQ(this)">
-            Can I continue my application later?
-            <span>+</span>
-          </button>
+        <div class="faq-container">
+          <div class="faq-item">
+            <button onclick="toggleFAQ(this)">
+              What is digital onboarding?
+              <span>+</span>
+            </button>
 
-          <div class="faq-answer">
-            Yes. In this frontend demo, registered applicants can return through
-            the login page and access their dashboard.
+            <div class="faq-answer">
+              Digital onboarding allows applicants to provide information and
+              complete an application electronically.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button onclick="toggleFAQ(this)">
+              What is KYC?
+              <span>+</span>
+            </button>
+
+            <div class="faq-answer">
+              KYC means Know Your Customer. It involves verifying customer
+              identity and information.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button onclick="toggleFAQ(this)">
+              Can I continue later?
+              <span>+</span>
+            </button>
+
+            <div class="faq-answer">
+              This frontend demonstration allows an applicant to return to the
+              login page and access the dashboard.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button onclick="toggleFAQ(this)">
+              Is this a real banking system?
+              <span>+</span>
+            </button>
+
+            <div class="faq-answer">
+              No. This is a frontend demonstration and does not process real
+              banking transactions or collect real banking information.
+            </div>
           </div>
         </div>
+      </section>
 
-        <div class="faq">
-          <button onclick="toggleFAQ(this)">
-            Is this a real banking system?
-            <span>+</span>
-          </button>
+      <!-- CTA -->
 
-          <div class="faq-answer">
-            No. This website is a frontend demonstration project and does not
-            process real banking transactions or collect real customer
-            information.
-          </div>
-        </div>
-      </div>
-    </section>
+      <section class="final-cta">
+        <span class="eyebrow">GET STARTED</span>
 
-    <!-- FINAL CTA -->
-    <section class="final-cta">
-      <h2>Ready to get started?</h2>
+        <h2>Ready to begin?</h2>
 
-      <p>Begin your digital onboarding journey today.</p>
+        <p>Start your digital onboarding application today.</p>
 
-      <button class="primary-btn" onclick="startApplication()">
-        Start Application →
-      </button>
-    </section>
+        <a href="register.html" class="btn-primary"> Start Application → </a>
+      </section>
+    </main>
 
-    <!-- FOOTER -->
     <footer>
-      <div class="logo">
-        <span>KCB</span>
+      <div class="brand">
+        <div class="brand-box">KCB</div>
+
+        <div>
+          <strong>Digital Onboarding</strong>
+          <small>Frontend Demonstration</small>
+        </div>
       </div>
 
-      <p>Digital Onboarding Demo</p>
-
-      <small> © 2026 Frontend Demonstration Project </small>
+      <p>© 2026 Digital Onboarding Demo</p>
     </footer>
 
     <script src="script.js"></script>

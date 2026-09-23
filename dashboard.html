@@ -4,71 +4,187 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Customer Dashboard</title>
+    <title>Dashboard | Digital Onboarding</title>
 
     <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
-    <nav class="navbar">
-      <h2 class="logo">KCB</h2>
+    <header class="navbar">
+      <a href="dashboard.html" class="brand">
+        <div class="brand-box">KCB</div>
 
-      <div class="tabs">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="profile.html">My Profile</a>
-        <a href="accounts.html">Accounts</a>
-        <a href="#">Transactions</a>
-        <a href="#">Services</a>
-        <a href="home.html">Logout</a>
+        <div>
+          <strong>Digital Onboarding</strong>
+          <small>Applicant Portal</small>
+        </div>
+      </a>
+
+      <nav>
+        <a href="dashboard.html" class="active-link"> Dashboard </a>
+
+        <a href="index.html"> Home </a>
+      </nav>
+
+      <button class="logout-btn" onclick="logoutApplicant()">Logout</button>
+    </header>
+
+    <main class="dashboard">
+      <div class="dashboard-heading">
+        <div>
+          <span class="eyebrow">APPLICANT PORTAL</span>
+
+          <h1>Welcome back, Applicant</h1>
+
+          <p>Track and complete your onboarding application.</p>
+        </div>
+
+        <span class="application-id"> Application #KCB-2026-001 </span>
       </div>
-    </nav>
 
-    <section class="dashboard">
-      <h1>Welcome to Your Dashboard 👋</h1>
+      <!-- STATUS -->
 
-      <p>Manage your customer account from your dashboard.</p>
+      <section class="status-card">
+        <div class="status-main">
+          <div class="status-icon">✓</div>
 
-      <div class="dashboard-cards">
-        <a href="profile.html" class="dashboard-card-link">
-          <div class="dashboard-card">
-            <h2>👤</h2>
+          <div>
+            <span>APPLICATION STATUS</span>
 
-            <h3>My Profile</h3>
+            <h2>In Progress</h2>
 
-            <p>View and manage your personal information.</p>
+            <p>
+              Your application has been created. Complete the remaining
+              verification steps to continue.
+            </p>
           </div>
-        </a>
+        </div>
 
-        <a href="accounts.html" class="dashboard-card-link">
-          <div class="dashboard-card">
-            <h2>💳</h2>
+        <div class="overall-progress">
+          <div>
+            <span>Overall progress</span>
 
-            <h3>Accounts</h3>
-
-            <p>View your account information and balance.</p>
+            <strong>33%</strong>
           </div>
-        </a>
 
-        <a href="#" class="dashboard-card-link">
-          <div class="dashboard-card">
-            <h2>💰</h2>
-
-            <h3>Transactions</h3>
-
-            <p>View your recent transactions.</p>
+          <div class="progress-bar">
+            <div class="dashboard-progress"></div>
           </div>
-        </a>
+        </div>
+      </section>
 
-        <a href="#" class="dashboard-card-link">
-          <div class="dashboard-card">
-            <h2>🛠️</h2>
+      <!-- DASHBOARD GRID -->
 
-            <h3>Services</h3>
-
-            <p>Explore available banking services.</p>
+      <div class="dashboard-grid">
+        <section class="dashboard-card">
+          <div class="card-title">
+            <div>
+              <span class="eyebrow">APPLICATION</span>
+              <h2>Onboarding steps</h2>
+            </div>
           </div>
-        </a>
+
+          <div class="dashboard-step completed">
+            <div class="step-check">✓</div>
+
+            <div>
+              <strong>Applicant profile</strong>
+              <p>Profile information completed.</p>
+            </div>
+
+            <span>Complete</span>
+          </div>
+
+          <div class="dashboard-step current">
+            <div class="step-number-small">2</div>
+
+            <div>
+              <strong>Identity verification</strong>
+              <p>Provide your verification information.</p>
+            </div>
+
+            <button onclick="continueVerification()">Continue</button>
+          </div>
+
+          <div class="dashboard-step">
+            <div class="step-number-small">3</div>
+
+            <div>
+              <strong>Application review</strong>
+              <p>Review your information before submission.</p>
+            </div>
+
+            <span>Pending</span>
+          </div>
+        </section>
+
+        <!-- PROFILE -->
+
+        <section class="dashboard-card">
+          <div class="card-title">
+            <div>
+              <span class="eyebrow">PROFILE</span>
+              <h2>Applicant information</h2>
+            </div>
+
+            <span class="profile-icon">👤</span>
+          </div>
+
+          <div class="profile-row">
+            <span>Name</span>
+
+            <strong id="dashboardName"> Applicant </strong>
+          </div>
+
+          <div class="profile-row">
+            <span>Email</span>
+
+            <strong id="dashboardEmail"> applicant@example.com </strong>
+          </div>
+
+          <div class="profile-row">
+            <span>Application type</span>
+
+            <strong>Digital Onboarding</strong>
+          </div>
+
+          <div class="profile-row">
+            <span>Status</span>
+
+            <strong class="green-text"> In Progress </strong>
+          </div>
+        </section>
       </div>
-    </section>
+
+      <!-- INFORMATION -->
+
+      <section class="dashboard-info">
+        <div class="info-icon">🔐</div>
+
+        <div>
+          <h3>Keep your information secure</h3>
+
+          <p>
+            This is a frontend demonstration. Never enter real passwords,
+            identification numbers, or banking information.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="brand">
+        <div class="brand-box">KCB</div>
+
+        <div>
+          <strong>Digital Onboarding</strong>
+          <small>Frontend Demonstration</small>
+        </div>
+      </div>
+
+      <p>© 2026 Digital Onboarding Demo</p>
+    </footer>
+
+    <script src="script.js"></script>
   </body>
 </html>
