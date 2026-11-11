@@ -1,0 +1,434 @@
+<div class="reviewer-page customer-dashboard">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">K</div>
+      <div class="brand-copy">
+        <span class="brand-name">KCB BANK</span>
+        <small>DIGITAL BANKING</small>
+      </div>
+    </div>
+
+    <p class="sidebar-caption">CUSTOMER PORTAL</p>
+
+    <nav class="side-menu">
+      <button
+        type="button"
+        class="menu-item"
+        [class.active]="activeSection === 'top'"
+        (click)="selectSection('top')">
+        <span class="menu-icon">⌂</span>
+        <span>Dashboard</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item"
+        [class.active]="activeSection === 'application'"
+        (click)="selectSection('application')">
+        <span class="menu-icon">▤</span>
+        <span>My Application</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item"
+        [class.active]="activeSection === 'kyc'"
+        (click)="selectSection('kyc')">
+        <span class="menu-icon">✓</span>
+        <span>KYC Verification</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-note">
+      <span class="note-icon">✦</span>
+      <strong>Your banking journey</strong>
+      <p>Track your application and stay updated on your onboarding progress.</p>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-help">
+        <span class="online-dot"></span>
+        <span>Customer support available</span>
+      </div>
+
+      <button type="button" class="logout-button" (click)="logout()">
+        ↪ &nbsp; Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="reviewer-main">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">CUSTOMER WORKSPACE</span>
+        <h2>
+          {{ activeSection === 'top' ? 'My Dashboard' :
+          activeSection === 'application' ? 'My Application' :
+            'KYC Verification' }}
+        </h2>
+      </div>
+
+      <div class="user-area">
+        <div class="avatar">
+          {{ name ? name.charAt(0).toUpperCase() : 'A' }}
+        </div>
+
+        <div class="user-details">
+          <strong>{{ name }}</strong>
+          <span>Customer Account</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- LOADING -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="loader"></div>
+      <span>Loading your dashboard...</span>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+      <!-- DASHBOARD VIEW -->
+      <ng-container *ngIf="activeSection === 'top'">
+
+        <!-- WELCOME BANNER -->
+        <section class="welcome-banner">
+          <div class="welcome-content">
+            <span class="welcome-tag">KCB DIGITAL BANKING</span>
+
+            <h1>
+              {{ greeting }},
+              <span>{{ name }}</span>
+            </h1>
+
+            <p>
+              Welcome to your customer portal. Follow your application progress,
+              check your KYC verification status and stay informed throughout
+              your onboarding journey.
+            </p>
+
+            <!-- ACCOUNT NUMBER -->
+            <div class="account-number-display" *ngIf="accountNumber">
+              <span>YOUR ACCOUNT NUMBER</span>
+              <strong>{{ accountNumber }}</strong>
+            </div>
+
+            <button
+              type="button"
+              class="banner-button"
+              (click)="selectSection('application')">
+              View My Application &nbsp; →
+            </button>
+          </div>
+
+          <div class="banner-decoration">
+            <div class="banner-circle">K</div>
+          </div>
+        </section>
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-icon green-icon">▤</span>
+              <span class="stat-label">APPLICATION</span>
+            </div>
+
+            <span class="stat-title">Application Status</span>
+            <strong class="stat-value">{{ applicationStatus }}</strong>
+            <span class="stat-foot">Your current application progress</span>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-icon gold-icon">✓</span>
+              <span class="stat-label">VERIFICATION</span>
+            </div>
+
+            <span class="stat-title">KYC Status</span>
+            <strong class="stat-value">{{ kycStatus }}</strong>
+            <span class="stat-foot">Identity and document verification</span>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-icon blue-icon">◷</span>
+              <span class="stat-label">ACCOUNT</span>
+            </div>
+
+            <span class="stat-title">Registration</span>
+            <strong class="stat-value">Submitted</strong>
+            <span class="stat-foot">Your registration has been received</span>
+          </article>
+
+        </section>
+
+        <!-- ONBOARDING JOURNEY -->
+        <section class="journey-section">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">YOUR PROGRESS</span>
+              <h2>Onboarding Journey</h2>
+              <p>Follow the progress of your KCB customer registration.</p>
+            </div>
+          </div>
+
+          <div class="journey-card">
+
+            <div class="journey-step">
+              <div class="journey-number completed">✓</div>
+              <div>
+                <strong>Registration</strong>
+                <span>Application submitted</span>
+              </div>
+            </div>
+
+            <div class="journey-line"></div>
+
+            <div class="journey-step">
+              <div
+                class="journey-number"
+                [class.completed]="applicationStatus.toUpperCase() === 'APPROVED'">
+                {{ applicationStatus.toUpperCase() === 'APPROVED' ? '✓' : '2' }}
+              </div>
+
+              <div>
+                <strong>Application Review</strong>
+                <span>{{ applicationStatus }}</span>
+              </div>
+            </div>
+
+            <div class="journey-line"></div>
+
+            <div class="journey-step">
+              <div
+                class="journey-number"
+                [class.completed]="kycStatus.toUpperCase() === 'APPROVED'">
+                {{ kycStatus.toUpperCase() === 'APPROVED' ? '✓' : '3' }}
+              </div>
+
+              <div>
+                <strong>KYC Verification</strong>
+                <span>{{ kycStatus }}</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </ng-container>
+
+      <!-- MY APPLICATION VIEW -->
+      <ng-container *ngIf="activeSection === 'application'">
+
+        <section class="applications-section">
+
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">REGISTRATION DETAILS</span>
+              <h2>My Application</h2>
+              <p>View your submitted application information and review status.</p>
+            </div>
+
+            <span
+              class="status-pill"
+              [ngClass]="{
+                'approved-status': applicationStatus.toUpperCase() === 'APPROVED',
+                'rejected-status': isApplicationRejected,
+                'pending-status': !isApplicationRejected &&
+                                  applicationStatus.toUpperCase() !== 'APPROVED'
+              }">
+              {{ applicationStatus }}
+            </span>
+          </div>
+
+          <div class="application-panel">
+
+            <div class="application-card-heading">
+              <div>
+                <span class="eyebrow">APPLICATION OVERVIEW</span>
+                <h3>Personal Information</h3>
+              </div>
+
+              <span class="application-reference">
+                {{ applicant?.id || 'Application details' }}
+              </span>
+            </div>
+
+            <div class="detail-grid">
+
+              <div class="detail-item">
+                <span>Full Name</span>
+                <strong>
+                  {{ applicant?.full_name || applicant?.fullName || name }}
+                </strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Email Address</span>
+                <strong>{{ applicant?.email || 'Not available' }}</strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Phone Number</span>
+                <strong>
+                  {{ applicant?.phone_number || applicant?.phoneNumber || 'Not available' }}
+                </strong>
+              </div>
+
+              <div class="detail-item">
+                <span>County</span>
+                <strong>{{ applicant?.county || 'Not available' }}</strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Town</span>
+                <strong>{{ applicant?.town || 'Not available' }}</strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Application Status</span>
+                <strong>{{ applicationStatus }}</strong>
+              </div>
+
+            </div>
+
+            <!-- APPROVED MESSAGE -->
+            <div
+              class="application-info approved-message"
+              *ngIf="applicationStatus.toUpperCase() === 'APPROVED'">
+
+              <span class="info-icon">✓</span>
+
+              <p>
+                Your application has been approved! Congratulations.
+                Your application has successfully passed the review process.
+              </p>
+            </div>
+
+            <!-- REJECTED MESSAGE -->
+            <div class="feedback-panel" *ngIf="isApplicationRejected">
+
+              <div class="feedback-heading">
+                <span class="feedback-icon">!</span>
+
+                <div>
+                  <strong>Application Rejected</strong>
+                  <small>Your reviewer has provided the following feedback.</small>
+                </div>
+              </div>
+
+              <p>{{ applicationRejectionReason }}</p>
+
+              <span class="feedback-note">
+                Please review the feedback and follow the instructions provided.
+              </span>
+
+            </div>
+
+            <!-- PENDING MESSAGE -->
+            <div
+              class="application-info"
+              *ngIf="!isApplicationRejected &&
+                     applicationStatus.toUpperCase() !== 'APPROVED'">
+
+              <span class="info-icon">i</span>
+
+              <p>
+                Your application is being processed. You can check this dashboard
+                for updates on your application status.
+              </p>
+
+            </div>
+
+          </div>
+        </section>
+
+      </ng-container>
+
+      <!-- KYC VERIFICATION VIEW -->
+      <ng-container *ngIf="activeSection === 'kyc'">
+
+        <section class="applications-section">
+
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">IDENTITY VERIFICATION</span>
+              <h2>KYC Verification</h2>
+              <p>Check the status of your Know Your Customer verification.</p>
+            </div>
+
+            <span
+              class="status-pill"
+              [ngClass]="{
+                'approved-status': kycStatus.toUpperCase() === 'APPROVED',
+                'rejected-status': kycStatus.toUpperCase() === 'REJECTED',
+                'pending-status': kycStatus.toUpperCase() !== 'APPROVED' &&
+                                  kycStatus.toUpperCase() !== 'REJECTED'
+              }">
+              {{ kycStatus }}
+            </span>
+          </div>
+
+          <div class="application-panel kyc-panel">
+
+            <div class="kyc-status-icon">✓</div>
+
+            <div class="kyc-content">
+              <h3>Identity and Document Verification</h3>
+
+              <p>
+                Your KYC documents are reviewed to verify your identity and
+                support your customer onboarding process.
+              </p>
+
+              <!-- KYC REJECTED -->
+              <div
+                class="kyc-rejection"
+                *ngIf="kycStatus.toUpperCase() === 'REJECTED'">
+
+                <strong>Verification feedback</strong>
+                <p>{{ kycRejectionReason }}</p>
+              </div>
+
+              <!-- KYC PENDING -->
+              <div
+                class="kyc-pending"
+                *ngIf="kycStatus.toUpperCase() !== 'APPROVED' &&
+                       kycStatus.toUpperCase() !== 'REJECTED'">
+
+                Your KYC verification is currently {{ kycStatus.toLowerCase() }}.
+                Please check back for updates.
+              </div>
+
+              <!-- KYC APPROVED -->
+              <div
+                class="kyc-approved"
+                *ngIf="kycStatus.toUpperCase() === 'APPROVED'">
+
+                Your KYC verification has been approved.
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+      </ng-container>
+
+    </ng-container>
+
+    <!-- FOOTER -->
+    <footer class="reviewer-footer">
+      <strong>KCB BANK</strong>
+      <span>© 2026 KCB Digital Banking. All rights reserved.</span>
+      <span>Secure Customer Portal</span>
+    </footer>
+
+  </main>
+</div>

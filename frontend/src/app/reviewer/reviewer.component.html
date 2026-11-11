@@ -1,0 +1,451 @@
+<div class="reviewer-page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">K</div>
+      <div class="brand-copy">
+        <span class="brand-name">KCB BANK</span>
+        <small>DIGITAL BANKING</small>
+      </div>
+    </div>
+
+    <p class="sidebar-caption">REVIEW WORKSPACE</p>
+
+    <nav class="side-menu">
+      <button class="menu-item"
+              [class.active]="activeMenu === 'overview'"
+              (click)="selectMenu('overview')">
+        <span class="menu-icon">⌂</span>
+        Overview
+      </button>
+
+      <button class="menu-item"
+              [class.active]="activeMenu === 'pending'"
+              (click)="selectMenu('pending')">
+        <span class="menu-icon">◷</span>
+        Pending Applications
+        <span class="menu-count">{{ pendingCount }}</span>
+      </button>
+
+      <button class="menu-item"
+              [class.active]="activeMenu === 'approved'"
+              (click)="selectMenu('approved')">
+        <span class="menu-icon">✓</span>
+        Approved
+      </button>
+
+      <button class="menu-item"
+              [class.active]="activeMenu === 'rejected'"
+              (click)="selectMenu('rejected')">
+        <span class="menu-icon">×</span>
+        Rejected
+      </button>
+
+      <button class="menu-item"
+              [class.active]="activeMenu === 'all'"
+              (click)="selectMenu('all')">
+        <span class="menu-icon">▤</span>
+        All Applications
+      </button>
+    </nav>
+
+    <div class="sidebar-note">
+      <span class="note-icon">✦</span>
+      <strong>Responsible review.</strong>
+      <p>Review customer information and documents carefully before making a decision.</p>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-help">
+        <span class="online-dot"></span>
+        Secure reviewer workspace
+      </div>
+
+      <button class="logout-button" (click)="logout()">
+        ↗ Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="reviewer-main">
+
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">KCB BANK / REVIEW WORKSPACE</span>
+        <h2>{{ pageTitle }}</h2>
+      </div>
+
+      <div class="user-area">
+        <div class="avatar">R</div>
+        <div class="user-details">
+          <strong>Application Reviewer</strong>
+          <span>Staff workspace</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MESSAGES -->
+    <div class="alert success-alert" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="alert error-alert" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- WELCOME BANNER -->
+    <section class="welcome-banner" *ngIf="activeMenu === 'overview'">
+      <div class="welcome-content">
+        <span class="welcome-tag">KCB REVIEW CENTRE</span>
+        <h1>Welcome to the <span>review workspace.</span></h1>
+        <p>
+          Manage customer applications, verify submitted information
+          and keep track of onboarding decisions.
+        </p>
+      </div>
+
+      <div class="banner-decoration">
+        <div class="banner-circle">K</div>
+      </div>
+    </section>
+
+    <!-- STATISTICS -->
+    <section class="stats-grid" *ngIf="activeMenu === 'overview'">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon green-icon">▤</span>
+          <span class="stat-label">01</span>
+        </div>
+        <span class="stat-title">Total applications</span>
+        <strong class="stat-value">{{ totalCount }}</strong>
+        <span class="stat-foot">All submitted applications</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon gold-icon">◷</span>
+          <span class="stat-label">02</span>
+        </div>
+        <span class="stat-title">Pending review</span>
+        <strong class="stat-value">{{ pendingCount }}</strong>
+        <span class="stat-foot">Awaiting a decision</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon blue-icon">✓</span>
+          <span class="stat-label">03</span>
+        </div>
+        <span class="stat-title">Approved</span>
+        <strong class="stat-value">{{ approvedCount }}</strong>
+        <span class="stat-foot">Successfully approved</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon red-icon">×</span>
+          <span class="stat-label">04</span>
+        </div>
+        <span class="stat-title">Rejected</span>
+        <strong class="stat-value">{{ rejectedCount }}</strong>
+        <span class="stat-foot">Applications requiring correction</span>
+      </article>
+    </section>
+
+    <!-- APPLICATIONS -->
+    <section class="applications-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">CUSTOMER ONBOARDING</span>
+          <h2>{{ pageTitle }}</h2>
+          <p>Review applicant information and submitted documents.</p>
+        </div>
+
+        <button class="refresh-button"
+                type="button"
+                (click)="loadApplicants()">
+          ↻ Refresh
+        </button>
+      </div>
+
+      <div class="application-panel">
+
+        <div class="toolbar">
+          <div class="search-box">
+            <span>⌕</span>
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()"
+              placeholder="Search by name, email or application ID">
+          </div>
+        </div>
+
+        <div class="loading-state" *ngIf="loading">
+          <div class="loader"></div>
+          <p>Loading applications...</p>
+        </div>
+
+        <div class="table-wrapper" *ngIf="!loading">
+          <table>
+            <thead>
+            <tr>
+              <th>APPLICATION ID</th>
+              <th>APPLICANT</th>
+              <th>EMAIL ADDRESS</th>
+              <th>PHONE NUMBER</th>
+              <th>SUBMITTED</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let item of filteredApplicants">
+              <td class="application-id">
+                {{ item.id }}
+              </td>
+
+              <td class="applicant-name">
+                {{ item.fullName }}
+              </td>
+
+              <td>{{ item.email }}</td>
+              <td>{{ item.phoneNumber || 'Not available' }}</td>
+
+              <td>
+                {{ item.createdAt ? (item.createdAt | date:'dd MMM yyyy') : 'Not available' }}
+              </td>
+
+              <td>
+                  <span class="status-pill"
+                        [ngClass]="{
+                          'pending-status': item.applicationStatus.toUpperCase().includes('PENDING'),
+                          'approved-status': item.applicationStatus.toUpperCase().includes('APPROVED'),
+                          'rejected-status': item.applicationStatus.toUpperCase().includes('REJECTED')
+                        }">
+                    {{ item.applicationStatus }}
+                  </span>
+              </td>
+
+              <td>
+                <button class="view-button"
+                        type="button"
+                        (click)="reviewApplicant(item)">
+                  View Details
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredApplicants.length === 0">
+              <td colspan="7" class="empty-state">
+                No applications found.
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <footer class="reviewer-footer">
+      <strong>KCB BANK</strong>
+      <span>Banking on a better future.</span>
+      <span>Application Review Portal</span>
+    </footer>
+  </main>
+
+  <!-- APPLICATION DETAILS PANEL -->
+  <div class="overlay" *ngIf="showReviewPanel" (click)="closeReview()">
+
+    <section class="details-panel" (click)="$event.stopPropagation()">
+
+      <div class="panel-header">
+        <div>
+          <span class="eyebrow">APPLICATION REVIEW</span>
+          <h2>Applicant Details</h2>
+        </div>
+
+        <button class="close-button"
+                type="button"
+                (click)="closeReview()">
+          ×
+        </button>
+      </div>
+
+      <div *ngIf="loadingDetails" class="loading-state">
+        <div class="loader"></div>
+        <p>Loading applicant information...</p>
+      </div>
+
+      <ng-container *ngIf="!loadingDetails && applicantDetails">
+
+        <div class="applicant-summary">
+          <div class="summary-avatar">
+            {{ selectedApplicant?.fullName?.charAt(0)?.toUpperCase() || 'A' }}
+          </div>
+
+          <div>
+            <h3>{{ applicantDetails.full_name || selectedApplicant?.fullName }}</h3>
+            <span>{{ applicantDetails.email || selectedApplicant?.email }}</span>
+          </div>
+        </div>
+
+        <!-- PERSONAL INFORMATION -->
+        <div class="details-section">
+          <h3>Personal Information</h3>
+
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span>Full name</span>
+              <strong>{{ applicantDetails.full_name || 'Not available' }}</strong>
+            </div>
+
+            <div class="detail-item">
+              <span>Email address</span>
+              <strong>{{ applicantDetails.email || 'Not available' }}</strong>
+            </div>
+
+            <div class="detail-item">
+              <span>Phone number</span>
+              <strong>{{ applicantDetails.phone_number || 'Not available' }}</strong>
+            </div>
+
+            <div class="detail-item">
+              <span>County</span>
+              <strong>{{ applicantDetails.county || 'Not available' }}</strong>
+            </div>
+
+            <div class="detail-item">
+              <span>Town</span>
+              <strong>{{ applicantDetails.town || 'Not available' }}</strong>
+            </div>
+
+            <div class="detail-item">
+              <span>Application status</span>
+              <strong>{{ selectedApplicant?.applicationStatus }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOCUMENTS -->
+        <div class="details-section">
+          <h3>Submitted Documents</h3>
+
+          <div class="document-list">
+            <div class="document-item" *ngFor="let document of documents">
+              <div class="document-info">
+                <span class="document-icon">▤</span>
+                <div>
+                  <strong>{{ document.label }}</strong>
+                  <small>{{ document.path ? 'Document submitted' : 'Not submitted' }}</small>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="document-button"
+                [disabled]="!document.path"
+                (click)="openDocument(document)">
+                View
+              </button>
+            </div>
+
+            <p class="empty-documents" *ngIf="documents.length === 0">
+              No document information is available.
+            </p>
+          </div>
+        </div>
+
+        <!-- APPLICATION DECISION -->
+        <div class="review-actions">
+          <span class="eyebrow">REVIEW DECISION</span>
+          <h3>Application Decision</h3>
+          <p>
+            Carefully review the applicant's details and documents before
+            approving or rejecting this application.
+          </p>
+
+          <div class="action-buttons" *ngIf="!showRejectForm">
+            <button
+              type="button"
+              class="reject-button"
+              [disabled]="submittingReview"
+              (click)="rejectApplicant()">
+              Reject Application
+            </button>
+
+            <button
+              type="button"
+              class="approve-button"
+              [disabled]="submittingReview"
+              (click)="approveApplicant()">
+              Approve Application
+            </button>
+          </div>
+
+          <!-- REJECTION COMMENT FORM -->
+          <div class="rejection-form" *ngIf="showRejectForm">
+
+            <div class="comment-heading">
+              <span class="comment-icon">!</span>
+              <div>
+                <strong>Reason for rejection</strong>
+                <small>Explain clearly what the applicant needs to correct.</small>
+              </div>
+            </div>
+
+            <label for="rejectionReason">Reviewer comments</label>
+
+            <textarea
+              id="rejectionReason"
+              rows="5"
+              [value]="rejectionReason"
+              (input)="onRejectionReasonChange($event)"
+              placeholder="For example: The proof of address is unclear. Please upload a clear and recent utility bill.">
+            </textarea>
+
+            <small class="comment-note">
+              This comment will be visible to the applicant on their KCB dashboard.
+            </small>
+
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="reject-button"
+                [disabled]="!rejectionReason.trim() || submittingReview"
+                (click)="confirmRejection()">
+                {{ submittingReview ? 'Submitting...' : 'Confirm Rejection' }}
+              </button>
+
+              <button
+                type="button"
+                class="cancel-button"
+                [disabled]="submittingReview"
+                (click)="cancelRejection()">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+    </section>
+  </div>
+
+  <!-- DOCUMENT PREVIEW -->
+  <div class="preview-overlay" *ngIf="previewUrl" (click)="closePreview()">
+    <div class="preview-panel" (click)="$event.stopPropagation()">
+      <div class="preview-header">
+        <strong>{{ previewDocumentName }}</strong>
+        <button type="button" (click)="closePreview()">×</button>
+      </div>
+
+      <iframe [src]="previewUrl" title="Applicant document preview"></iframe>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,132 @@
+
+<div class="kyc-page">
+
+  <header class="kyc-header">
+    <a routerLink="/dashboard" class="back-link">← Back to Dashboard</a>
+    <span class="portal-label">KCB CUSTOMER PORTAL</span>
+    <h1>KYC Verification</h1>
+    <p>Review the documents submitted with your onboarding application.</p>
+  </header>
+
+  <div *ngIf="loading" class="message">
+    Loading your verification details...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="!loading && applicant">
+
+    <section class="verification-summary">
+      <div>
+        <span class="section-label">VERIFICATION STATUS</span>
+        <h2>Identity & Document Verification</h2>
+
+        <p *ngIf="kycStatus === 'APPROVED'">
+          Your identity and documents have been successfully verified.
+        </p>
+
+        <p *ngIf="kycStatus === 'REJECTED'">
+          Your verification was rejected. Please contact support for assistance.
+        </p>
+
+        <p *ngIf="kycStatus !== 'APPROVED' && kycStatus !== 'REJECTED'">
+          Your submitted documents are awaiting review by our team.
+        </p>
+      </div>
+
+      <span
+        class="pending-badge"
+        [class.approved-badge]="kycStatus === 'APPROVED'"
+        [class.rejected-badge]="kycStatus === 'REJECTED'">
+
+        {{ kycStatus === 'APPROVED'
+        ? 'APPROVED'
+        : kycStatus === 'REJECTED'
+          ? 'REJECTED'
+          : 'PENDING REVIEW' }}
+
+      </span>
+    </section>
+
+    <section class="document-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-label">YOUR DOCUMENTS</span>
+          <h2>Uploaded Documents</h2>
+        </div>
+
+        <span class="document-count">
+          {{ uploadedCount }} / {{ documents.length }} Submitted
+        </span>
+      </div>
+
+      <div class="document-grid">
+
+        <article class="document-card" *ngFor="let doc of documents">
+
+          <div class="document-icon">▤</div>
+
+          <div class="document-info">
+            <h3>{{ doc.name }}</h3>
+            <p>{{ doc.description }}</p>
+
+            <span
+              class="document-status"
+              [class.uploaded]="isUploaded(doc.key)"
+              [class.missing]="!isUploaded(doc.key)"
+              [class.approved-badge]="isUploaded(doc.key) && kycStatus === 'APPROVED'"
+              [class.rejected-badge]="isUploaded(doc.key) && kycStatus === 'REJECTED'">
+
+              {{ getDocumentStatus(doc.key) }}
+
+            </span>
+          </div>
+
+          <div class="document-action">
+            <button
+              *ngIf="isUploaded(doc.key)"
+              type="button"
+              (click)="openDocument(doc.key)">
+              View
+            </button>
+
+            <span *ngIf="!isUploaded(doc.key)" class="missing-label">
+              Required
+            </span>
+          </div>
+
+        </article>
+
+      </div>
+    </section>
+
+    <section class="information-card">
+      <div class="information-icon">ⓘ</div>
+      <div>
+        <h3>What happens next?</h3>
+
+        <p *ngIf="kycStatus === 'APPROVED'">
+          Your KYC verification is complete. Thank you for completing the verification process.
+        </p>
+
+        <p *ngIf="kycStatus === 'REJECTED'">
+          Please contact our support team to understand the reason for rejection and the next steps.
+        </p>
+
+        <p *ngIf="kycStatus !== 'APPROVED' && kycStatus !== 'REJECTED'">
+          Our verification team will review your submitted documents.
+          Your status will remain pending until a reviewer updates it.
+          Contact support if you need assistance.
+        </p>
+      </div>
+    </section>
+
+  </ng-container>
+
+  <footer class="kyc-footer">
+    © 2026 KCB Digital Onboarding
+  </footer>
+
+</div>

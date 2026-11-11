@@ -1,0 +1,97 @@
+<div class="login-page">
+
+  <div class="login-container">
+
+    <!-- BRAND -->
+    <div class="brand">
+      <div class="logo">KCB</div>
+
+      <div class="divider"></div>
+
+      <div class="portal">
+        <span>REVIEWER PORTAL</span>
+        <small>Applicant Onboarding</small>
+      </div>
+    </div>
+
+    <!-- LOGIN CARD -->
+    <div class="login-box">
+
+      <div class="staff-icon">
+        <span>♙</span>
+      </div>
+
+      <p class="eyebrow">AUTHORIZED STAFF ACCESS</p>
+
+      <h1>Welcome back.</h1>
+
+      <p class="intro">
+        Sign in to access your reviewer dashboard,
+        manage applications and verify customer documents.
+      </p>
+
+      <form (ngSubmit)="login()">
+
+        <label for="staffId">Staff ID</label>
+
+        <input
+          id="staffId"
+          type="text"
+          name="staffId"
+          [(ngModel)]="staffId"
+          placeholder="Enter your Staff ID"
+          autocomplete="username"
+          required
+        />
+
+        <label for="password">Password</label>
+
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          required
+        />
+
+        <div class="login-error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button
+          type="submit"
+          class="signin-btn"
+          [disabled]="loading || !staffId.trim() || !password">
+
+          <span *ngIf="!loading">Sign In to Portal →</span>
+          <span *ngIf="loading">Signing in...</span>
+
+        </button>
+
+      </form>
+
+      <div class="security-note">
+        <span>🔒</span>
+        <p>Secure access for authorized KCB personnel only.</p>
+      </div>
+
+      <button
+        type="button"
+        class="back-btn"
+        (click)="goHome()">
+        ← Back to main portal
+      </button>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="login-footer">
+      <span>© 2026 KCB Digital Onboarding</span>
+      <span>Authorized staff access</span>
+    </div>
+
+  </div>
+
+</div>

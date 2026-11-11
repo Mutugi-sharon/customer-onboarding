@@ -1,0 +1,985 @@
+# Customer Onboarding — Current State & Gaps Flowchart
+
+```mermaid
+flowchart TD
+    A([Start: Applicant Portal]) --> B[Home Page]
+    B --> C{User Choice}
+
+    C -->|Start Application| D[Register Component<br/>5-Step Stepper]
+    C -->|Sign In| E[Login Component]
+    C -->|Staff Access| F[Reviewer Login]
+
+    %% REGISTER FLOW
+    D --> D1[Step 1: Personal Info]
+    D1 --> D2[Step 2: Contact Info]
+    D2 --> D3[Step 3: Security/Password]
+    D3 --> D4[Step 4: Documents Upload]
+    D4 --> D5[Step 5: Review & Submit]
+
+    D5 --> D6{POST /api/applicants/add}
+    D6 -->|✅ EXISTS? NO ❌| X1[❌ 404 - Endpoint Missing]
+    D6 -->|IF existed| D7[Backend: savePersonalDetails]
+    D7 --> D8[Returns row count only<br/>❌ NO applicationId]
+    D8 --> X2[❌ Frontend expects applicationId]
+
+    D4 -.documents never sent.-> X3[❌ No upload endpoint<br/>Files discarded]
+
+    D3 -.password sent but.-> X4[❌ Backend ignores password<br/>password_hash never written]
+
+    D2 -.field mismatch.-> X5[❌ phone vs phoneNumber<br/>address vs residentialAddress]
+
+    %% LOGIN FLOW
+    E --> E1[login method]
+    E1 -.no API call.-> E2[❌ Navigates to /dashboard<br/>No auth, no token, no guard]
+    E2 --> G[Dashboard Component]
+    G --> G1[Static cards only<br/>❌ No data fetched]
+
+    %% REVIEWER FLOW
+    F --> F1[reviewer-login]
+    F1 -.no auth check.-> F2[❌ Any credentials accepted]
+    F2 --> H[Reviewer Component]
+    H --> H1[Hardcoded applicants array<br/>❌ GET /list missing]
+    H1 --> H2{Approve / Reject}
+    H2 -.no endpoint.-> H3[❌ PATCH /status missing<br/>Only updates local array]
+
+    %% BACKEND STATE
+    subgraph BACKEND ["✅ Backend — What EXISTS"]
+        B1[GET /gender ✅]
+        B2[GET /nationalities ✅]
+        B3[POST /personal-details ✅<br/>returns DTO, no ID]
+        B4[POST /contact-details ✅]
+        B5[GET /{applicantId} ✅]
+    end
+
+    subgraph MISSING ["❌ Backend — What's MISSING"]
+        M1[POST /add ❌]
+        M2[GET /list ❌]
+        M3[PATCH /{id}/status ❌]
+        M4[POST /{id}/documents ❌]
+        M5[POST /auth/login ❌]
+        M6[BCrypt password hashing ❌]
+        M7[JWT / session tokens ❌]
+        M8[@Valid + @ControllerAdvice ❌]
+    end
+
+    subgraph DB ["✅ Database (Flyway)"]
+        DB1[applicants ✅]
+        DB2[genders ✅]
+        DB3[nationalities ✅]
+        DB4[contact columns ✅]
+        DB5[email VARCHAR 50 ⚠️ too short]
+        DB6[password_hash column exists<br/>but never populated ⚠️]
+    end
+
+    subgraph FRONT ["✅ Frontend — What's DONE"]
+        FE1[Home page ✅]
+        FE2[Register stepper UI ✅]
+        FE3[Validation & rules ✅]
+        FE4[Reviewer UI ✅]
+        FE5[Dashboard UI ✅]
+    end
+
+    subgraph FRONTMISS ["❌ Frontend — What's MISSING"]
+        FM1[Auth guards ❌]
+        FM2[Token storage ❌]
+        FM3[Real API calls for login ❌]
+        FM4[Reviewer loads from API ❌]
+        FM5[Dashboard fetches data ❌]
+        FM6[File upload wiring ❌]
+    end
+
+    style X1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X3 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X4 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X5 fill:#ffcccc,stroke:#cc0000,color:#000
+    style E2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style F2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H3 fill:#ffcccc,stroke:#cc0000,color:#000
+
+    style BACKEND fill:#e6f5e6,stroke:#2e7d32
+    style DB fill:#e6f5e6,stroke:#2e7d32
+    style FRONT fill:#e6f5e6,stroke:#2e7d32
+    style MISSING fill:#fff0f0,stroke:#cc0000
+    style FRONTMISS fill:#fff0f0,stroke:#cc0000
+```
+
+---
+
+## 📊 Visual Legend
+
+| Symbol | Meaning |
+|---|---|
+| ✅ Green | Implemented and working |
+| ❌ Red | Missing / broken |
+| ⚠️ Orange | Present but incomplete |
+| `.  .` dotted arrow | Data flow that *should* exist but doesn't |
+| `---` solid arrow | Actual flow |
+
+---
+
+## 🗺️ Where You Currently Are
+
+**You are sitting at this exact point:**
+
+```
+Frontend Register Step 5  ──POST──▶  /api/applicants/add  ──▶  ❌ 404
+```# Customer Onboarding — Current State & Gaps Flowchart
+
+```mermaid
+flowchart TD
+    A([Start: Applicant Portal]) --> B[Home Page]
+    B --> C{User Choice}
+
+    C -->|Start Application| D[Register Component<br/>5-Step Stepper]
+    C -->|Sign In| E[Login Component]
+    C -->|Staff Access| F[Reviewer Login]
+
+    %% REGISTER FLOW
+    D --> D1[Step 1: Personal Info]
+    D1 --> D2[Step 2: Contact Info]
+    D2 --> D3[Step 3: Security/Password]
+    D3 --> D4[Step 4: Documents Upload]
+    D4 --> D5[Step 5: Review & Submit]
+
+    D5 --> D6{POST /api/applicants/add}
+    D6 -->|✅ EXISTS? NO ❌| X1[❌ 404 - Endpoint Missing]
+    D6 -->|IF existed| D7[Backend: savePersonalDetails]
+    D7 --> D8[Returns row count only<br/>❌ NO applicationId]
+    D8 --> X2[❌ Frontend expects applicationId]
+
+    D4 -.documents never sent.-> X3[❌ No upload endpoint<br/>Files discarded]
+
+    D3 -.password sent but.-> X4[❌ Backend ignores password<br/>password_hash never written]
+
+    D2 -.field mismatch.-> X5[❌ phone vs phoneNumber<br/>address vs residentialAddress]
+
+    %% LOGIN FLOW
+    E --> E1[login method]
+    E1 -.no API call.-> E2[❌ Navigates to /dashboard<br/>No auth, no token, no guard]
+    E2 --> G[Dashboard Component]
+    G --> G1[Static cards only<br/>❌ No data fetched]
+
+    %% REVIEWER FLOW
+    F --> F1[reviewer-login]
+    F1 -.no auth check.-> F2[❌ Any credentials accepted]
+    F2 --> H[Reviewer Component]
+    H --> H1[Hardcoded applicants array<br/>❌ GET /list missing]
+    H1 --> H2{Approve / Reject}
+    H2 -.no endpoint.-> H3[❌ PATCH /status missing<br/>Only updates local array]
+
+    %% BACKEND STATE
+    subgraph BACKEND ["✅ Backend — What EXISTS"]
+        B1[GET /gender ✅]
+        B2[GET /nationalities ✅]
+        B3[POST /personal-details ✅<br/>returns DTO, no ID]
+        B4[POST /contact-details ✅]
+        B5[GET /{applicantId} ✅]
+    end
+
+    subgraph MISSING ["❌ Backend — What's MISSING"]
+        M1[POST /add ❌]
+        M2[GET /list ❌]
+        M3[PATCH /{id}/status ❌]
+        M4[POST /{id}/documents ❌]
+        M5[POST /auth/login ❌]
+        M6[BCrypt password hashing ❌]
+        M7[JWT / session tokens ❌]
+        M8[@Valid + @ControllerAdvice ❌]
+    end
+
+    subgraph DB ["✅ Database (Flyway)"]
+        DB1[applicants ✅]
+        DB2[genders ✅]
+        DB3[nationalities ✅]
+        DB4[contact columns ✅]
+        DB5[email VARCHAR 50 ⚠️ too short]
+        DB6[password_hash column exists<br/>but never populated ⚠️]
+    end
+
+    subgraph FRONT ["✅ Frontend — What's DONE"]
+        FE1[Home page ✅]
+        FE2[Register stepper UI ✅]
+        FE3[Validation & rules ✅]
+        FE4[Reviewer UI ✅]
+        FE5[Dashboard UI ✅]
+    end
+
+    subgraph FRONTMISS ["❌ Frontend — What's MISSING"]
+        FM1[Auth guards ❌]
+        FM2[Token storage ❌]
+        FM3[Real API calls for login ❌]
+        FM4[Reviewer loads from API ❌]
+        FM5[Dashboard fetches data ❌]
+        FM6[File upload wiring ❌]
+    end
+
+    style X1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X3 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X4 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X5 fill:#ffcccc,stroke:#cc0000,color:#000
+    style E2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style F2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H3 fill:#ffcccc,stroke:#cc0000,color:#000
+
+    style BACKEND fill:#e6f5e6,stroke:#2e7d32
+    style DB fill:#e6f5e6,stroke:#2e7d32
+    style FRONT fill:#e6f5e6,stroke:#2e7d32
+    style MISSING fill:#fff0f0,stroke:#cc0000
+    style FRONTMISS fill:#fff0f0,stroke:#cc0000
+```
+
+---
+
+## 📊 Visual Legend
+
+| Symbol | Meaning |
+|---|---|
+| ✅ Green | Implemented and working |
+| ❌ Red | Missing / broken |
+| ⚠️ Orange | Present but incomplete |
+| `.  .` dotted arrow | Data flow that *should* exist but doesn't |
+| `---` solid arrow | Actual flow |
+
+---
+
+## 🗺️ Where You Currently Are
+
+**You are sitting at this exact point:**
+
+```
+Frontend Register Step 5  ──POST──▶  /api/applicants/add  ──▶  ❌ 404
+```
+
+Everything **up to** the submit button on Step 5 works visually. The moment a user clicks **"Submit Application"**, the app **fails** because:
+
+1. `POST /api/applicants/add` does not exist.
+2. Even if it did, the backend would not return `applicationId`, which `submitRegistration()` requires before redirecting to `/dashboard`.
+
+**Login is a fake flow** — it always "succeeds" and jumps to `/dashboard` with zero auth.
+
+**Reviewer portal is a demo** — the data lives in `reviewer.component.ts`, not the database.
+
+---
+
+## 🎯 Summary Table — Gap Matrix
+
+| Layer | Done | Missing | % Complete |
+|---|---|---|---|
+| **DB / Migrations** | 4/4 tables | `email` too short, `password_hash` never written | ~85% |
+| **Backend Endpoints** | 5 endpoints | `/add`, `/list`, `/status`, `/documents`, `/auth` | ~50% |
+| **Backend Security** | None | BCrypt, JWT, auth, validation | ~5% |
+| **Frontend UI** | All pages built | — | ~95% |
+| **Frontend Wiring** | Home + Register steps 1–4 | Submit call, login call, reviewer calls, guards | ~40% |
+| **Integration (FE↔BE)** | CORS configured | Endpoint names, payload fields, return types | ~25% |
+# Customer Onboarding — Current State & Gaps Flowchart
+
+```mermaid
+flowchart TD
+    A([Start: Applicant Portal]) --> B[Home Page]
+    B --> C{User Choice}
+
+    C -->|Start Application| D[Register Component<br/>5-Step Stepper]
+    C -->|Sign In| E[Login Component]
+    C -->|Staff Access| F[Reviewer Login]
+
+    %% REGISTER FLOW
+    D --> D1[Step 1: Personal Info]
+    D1 --> D2[Step 2: Contact Info]
+    D2 --> D3[Step 3: Security/Password]
+    D3 --> D4[Step 4: Documents Upload]
+    D4 --> D5[Step 5: Review & Submit]
+
+    D5 --> D6{POST /api/applicants/add}
+    D6 -->|✅ EXISTS? NO ❌| X1[❌ 404 - Endpoint Missing]
+    D6 -->|IF existed| D7[Backend: savePersonalDetails]
+    D7 --> D8[Returns row count only<br/>❌ NO applicationId]
+    D8 --> X2[❌ Frontend expects applicationId]
+
+    D4 -.documents never sent.-> X3[❌ No upload endpoint<br/>Files discarded]
+
+    D3 -.password sent but.-> X4[❌ Backend ignores password<br/>password_hash never written]
+
+    D2 -.field mismatch.-> X5[❌ phone vs phoneNumber<br/>address vs residentialAddress]
+
+    %% LOGIN FLOW
+    E --> E1[login method]
+    E1 -.no API call.-> E2[❌ Navigates to /dashboard<br/>No auth, no token, no guard]
+    E2 --> G[Dashboard Component]
+    G --> G1[Static cards only<br/>❌ No data fetched]
+
+    %% REVIEWER FLOW
+    F --> F1[reviewer-login]
+    F1 -.no auth check.-> F2[❌ Any credentials accepted]
+    F2 --> H[Reviewer Component]
+    H --> H1[Hardcoded applicants array<br/>❌ GET /list missing]
+    H1 --> H2{Approve / Reject}
+    H2 -.no endpoint.-> H3[❌ PATCH /status missing<br/>Only updates local array]
+
+    %% BACKEND STATE
+    subgraph BACKEND ["✅ Backend — What EXISTS"]
+        B1[GET /gender ✅]
+        B2[GET /nationalities ✅]
+        B3[POST /personal-details ✅<br/>returns DTO, no ID]
+        B4[POST /contact-details ✅]
+        B5[GET /{applicantId} ✅]
+    end
+
+    subgraph MISSING ["❌ Backend — What's MISSING"]
+        M1[POST /add ❌]
+        M2[GET /list ❌]
+        M3[PATCH /{id}/status ❌]
+        M4[POST /{id}/documents ❌]
+        M5[POST /auth/login ❌]
+        M6[BCrypt password hashing ❌]
+        M7[JWT / session tokens ❌]
+        M8[@Valid + @ControllerAdvice ❌]
+    end
+
+    subgraph DB ["✅ Database (Flyway)"]
+        DB1[applicants ✅]
+        DB2[genders ✅]
+        DB3[nationalities ✅]
+        DB4[contact columns ✅]
+        DB5[email VARCHAR 50 ⚠️ too short]
+        DB6[password_hash column exists<br/>but never populated ⚠️]
+    end
+
+    subgraph FRONT ["✅ Frontend — What's DONE"]
+        FE1[Home page ✅]
+        FE2[Register stepper UI ✅]
+        FE3[Validation & rules ✅]
+        FE4[Reviewer UI ✅]
+        FE5[Dashboard UI ✅]
+    end
+
+    subgraph FRONTMISS ["❌ Frontend — What's MISSING"]
+        FM1[Auth guards ❌]
+        FM2[Token storage ❌]
+        FM3[Real API calls for login ❌]
+        FM4[Reviewer loads from API ❌]
+        FM5[Dashboard fetches data ❌]
+        FM6[File upload wiring ❌]
+    end
+
+    style X1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X3 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X4 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X5 fill:#ffcccc,stroke:#cc0000,color:#000
+    style E2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style F2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H3 fill:#ffcccc,stroke:#cc0000,color:#000
+
+    style BACKEND fill:#e6f5e6,stroke:#2e7d32
+    style DB fill:#e6f5e6,stroke:#2e7d32
+    style FRONT fill:#e6f5e6,stroke:#2e7d32
+    style MISSING fill:#fff0f0,stroke:#cc0000
+    style FRONTMISS fill:#fff0f0,stroke:#cc0000
+```
+
+---
+
+## 📊 Visual Legend
+
+| Symbol | Meaning |
+|---|---|
+| ✅ Green | Implemented and working |
+| ❌ Red | Missing / broken |
+| ⚠️ Orange | Present but incomplete |
+| `.  .` dotted arrow | Data flow that *should* exist but doesn't |
+| `---` solid arrow | Actual flow |
+
+---
+
+## 🗺️ Where You Currently Are
+
+**You are sitting at this exact point:**
+
+```
+Frontend Register Step 5  ──POST──▶  /api/applicants/add  ──▶  ❌ 404
+```
+
+Everything **up to** the submit button on Step 5 works visually. The moment a user clicks **"Submit Application"**, the app **fails** because:
+
+1. `POST /api/applicants/add` does not exist.
+2. Even if it did, the backend would not return `applicationId`, which `submitRegistration()` requires before redirecting to `/dashboard`.
+
+**Login is a fake flow** — it always "succeeds" and jumps to `/dashboard` with zero auth.
+
+**Reviewer portal is a demo** — the data lives in `reviewer.component.ts`, not the database.
+
+---
+
+## 🎯 Summary Table — Gap Matrix
+
+| Layer | Done | Missing | % Complete |
+|---|---|---|---|
+| **DB / Migrations** | 4/4 tables | `email` too short, `password_hash` never written | ~85% |
+| **Backend Endpoints** | 5 endpoints | `/add`, `/list`, `/status`, `/documents`, `/auth` | ~50% |
+| **Backend Security** | None | BCrypt, JWT, auth, validation | ~5% |
+| **Frontend UI** | All pages built | — | ~95% |
+| **Frontend Wiring** | Home + Register steps 1–4 | Submit call, login call, reviewer calls, guards | ~40% |
+| **Integration (FE↔BE)** | CORS configured | Endpoint names, payload fields, return types | ~25% |
+
+---
+
+## 🚦 Critical Path to "Working Demo"
+
+To move from **current state** to **working end-to-end flow**, these four must be done first (in order):
+
+```
+1. POST /api/applicants/add  →  returns { applicationId }
+2. Fix DTO fields to match frontend payload
+3. GET  /api/applicants/list
+4. PATCH /api/applicants/{id}/status
+```
+
+After these four, the **register → dashboard** and **reviewer → approve/reject** flows will actually work. Everything else (auth, file uploads, polish) is layered on top.# Customer Onboarding — Current State & Gaps Flowchart
+
+```mermaid
+flowchart TD
+    A([Start: Applicant Portal]) --> B[Home Page]
+    B --> C{User Choice}
+
+    C -->|Start Application| D[Register Component<br/>5-Step Stepper]
+    C -->|Sign In| E[Login Component]
+    C -->|Staff Access| F[Reviewer Login]
+
+    %% REGISTER FLOW
+    D --> D1[Step 1: Personal Info]
+    D1 --> D2[Step 2: Contact Info]
+    D2 --> D3[Step 3: Security/Password]
+    D3 --> D4[Step 4: Documents Upload]
+    D4 --> D5[Step 5: Review & Submit]
+
+    D5 --> D6{POST /api/applicants/add}
+    D6 -->|✅ EXISTS? NO ❌| X1[❌ 404 - Endpoint Missing]
+    D6 -->|IF existed| D7[Backend: savePersonalDetails]
+    D7 --> D8[Returns row count only<br/>❌ NO applicationId]
+    D8 --> X2[❌ Frontend expects applicationId]
+
+    D4 -.documents never sent.-> X3[❌ No upload endpoint<br/>Files discarded]
+
+    D3 -.password sent but.-> X4[❌ Backend ignores password<br/>password_hash never written]
+
+    D2 -.field mismatch.-> X5[❌ phone vs phoneNumber<br/>address vs residentialAddress]
+
+    %% LOGIN FLOW
+    E --> E1[login method]
+    E1 -.no API call.-> E2[❌ Navigates to /dashboard<br/>No auth, no token, no guard]
+    E2 --> G[Dashboard Component]
+    G --> G1[Static cards only<br/>❌ No data fetched]
+
+    %% REVIEWER FLOW
+    F --> F1[reviewer-login]
+    F1 -.no auth check.-> F2[❌ Any credentials accepted]
+    F2 --> H[Reviewer Component]
+    H --> H1[Hardcoded applicants array<br/>❌ GET /list missing]
+    H1 --> H2{Approve / Reject}
+    H2 -.no endpoint.-> H3[❌ PATCH /status missing<br/>Only updates local array]
+
+    %% BACKEND STATE
+    subgraph BACKEND ["✅ Backend — What EXISTS"]
+        B1[GET /gender ✅]
+        B2[GET /nationalities ✅]
+        B3[POST /personal-details ✅<br/>returns DTO, no ID]
+        B4[POST /contact-details ✅]
+        B5[GET /{applicantId} ✅]
+    end
+
+    subgraph MISSING ["❌ Backend — What's MISSING"]
+        M1[POST /add ❌]
+        M2[GET /list ❌]
+        M3[PATCH /{id}/status ❌]
+        M4[POST /{id}/documents ❌]
+        M5[POST /auth/login ❌]
+        M6[BCrypt password hashing ❌]
+        M7[JWT / session tokens ❌]
+        M8[@Valid + @ControllerAdvice ❌]
+    end
+
+    subgraph DB ["✅ Database (Flyway)"]
+        DB1[applicants ✅]
+        DB2[genders ✅]
+        DB3[nationalities ✅]
+        DB4[contact columns ✅]
+        DB5[email VARCHAR 50 ⚠️ too short]
+        DB6[password_hash column exists<br/>but never populated ⚠️]
+    end
+
+    subgraph FRONT ["✅ Frontend — What's DONE"]
+        FE1[Home page ✅]
+        FE2[Register stepper UI ✅]
+        FE3[Validation & rules ✅]
+        FE4[Reviewer UI ✅]
+        FE5[Dashboard UI ✅]
+    end
+
+    subgraph FRONTMISS ["❌ Frontend — What's MISSING"]
+        FM1[Auth guards ❌]
+        FM2[Token storage ❌]
+        FM3[Real API calls for login ❌]
+        FM4[Reviewer loads from API ❌]
+        FM5[Dashboard fetches data ❌]
+        FM6[File upload wiring ❌]
+    end
+
+    style X1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X3 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X4 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X5 fill:#ffcccc,stroke:#cc0000,color:#000
+    style E2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style F2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H3 fill:#ffcccc,stroke:#cc0000,color:#000
+
+    style BACKEND fill:#e6f5e6,stroke:#2e7d32
+    style DB fill:#e6f5e6,stroke:#2e7d32
+    style FRONT fill:#e6f5e6,stroke:#2e7d32
+    style MISSING fill:#fff0f0,stroke:#cc0000
+    style FRONTMISS fill:#fff0f0,stroke:#cc0000
+```
+
+---
+
+## 📊 Visual Legend
+
+| Symbol | Meaning |
+|---|---|
+| ✅ Green | Implemented and working |
+| ❌ Red | Missing / broken |
+| ⚠️ Orange | Present but incomplete |
+| `.  .` dotted arrow | Data flow that *should* exist but doesn't |
+| `---` solid arrow | Actual flow |
+
+---
+
+## 🗺️ Where You Currently Are
+
+**You are sitting at this exact point:**
+
+```
+Frontend Register Step 5  ──POST──▶  /api/applicants/add  ──▶  ❌ 404
+```
+
+Everything **up to** the submit button on Step 5 works visually. The moment a user clicks **"Submit Application"**, the app **fails** because:
+
+1. `POST /api/applicants/add` does not exist.
+2. Even if it did, the backend would not return `applicationId`, which `submitRegistration()` requires before redirecting to `/dashboard`.
+
+**Login is a fake flow** — it always "succeeds" and jumps to `/dashboard` with zero auth.
+
+**Reviewer portal is a demo** — the data lives in `reviewer.component.ts`, not the database.
+
+---
+
+## 🎯 Summary Table — Gap Matrix
+
+| Layer | Done | Missing | % Complete |
+|---|---|---|---|
+| **DB / Migrations** | 4/4 tables | `email` too short, `password_hash` never written | ~85% |
+| **Backend Endpoints** | 5 endpoints | `/add`, `/list`, `/status`, `/documents`, `/auth` | ~50% |
+| **Backend Security** | None | BCrypt, JWT, auth, validation | ~5% |
+| **Frontend UI** | All pages built | — | ~95% |
+| **Frontend Wiring** | Home + Register steps 1–4 | Submit call, login call, reviewer calls, guards | ~40% |
+| **Integration (FE↔BE)** | CORS configured | Endpoint names, payload fields, return types | ~25% |
+
+---
+# Customer Onboarding — Current State & Gaps Flowchart
+
+```mermaid
+flowchart TD
+    A([Start: Applicant Portal]) --> B[Home Page]
+    B --> C{User Choice}
+
+    C -->|Start Application| D[Register Component<br/>5-Step Stepper]
+    C -->|Sign In| E[Login Component]
+    C -->|Staff Access| F[Reviewer Login]
+
+    %% REGISTER FLOW
+    D --> D1[Step 1: Personal Info]
+    D1 --> D2[Step 2: Contact Info]
+    D2 --> D3[Step 3: Security/Password]
+    D3 --> D4[Step 4: Documents Upload]
+    D4 --> D5[Step 5: Review & Submit]
+
+    D5 --> D6{POST /api/applicants/add}
+    D6 -->|✅ EXISTS? NO ❌| X1[❌ 404 - Endpoint Missing]
+    D6 -->|IF existed| D7[Backend: savePersonalDetails]
+    D7 --> D8[Returns row count only<br/>❌ NO applicationId]
+    D8 --> X2[❌ Frontend expects applicationId]
+
+    D4 -.documents never sent.-> X3[❌ No upload endpoint<br/>Files discarded]
+
+    D3 -.password sent but.-> X4[❌ Backend ignores password<br/>password_hash never written]
+
+    D2 -.field mismatch.-> X5[❌ phone vs phoneNumber<br/>address vs residentialAddress]
+
+    %% LOGIN FLOW
+    E --> E1[login method]
+    E1 -.no API call.-> E2[❌ Navigates to /dashboard<br/>No auth, no token, no guard]
+    E2 --> G[Dashboard Component]
+    G --> G1[Static cards only<br/>❌ No data fetched]
+
+    %% REVIEWER FLOW
+    F --> F1[reviewer-login]
+    F1 -.no auth check.-> F2[❌ Any credentials accepted]
+    F2 --> H[Reviewer Component]
+    H --> H1[Hardcoded applicants array<br/>❌ GET /list missing]
+    H1 --> H2{Approve / Reject}
+    H2 -.no endpoint.-> H3[❌ PATCH /status missing<br/>Only updates local array]
+
+    %% BACKEND STATE
+    subgraph BACKEND ["✅ Backend — What EXISTS"]
+        B1[GET /gender ✅]
+        B2[GET /nationalities ✅]
+        B3[POST /personal-details ✅<br/>returns DTO, no ID]
+        B4[POST /contact-details ✅]
+        B5[GET /{applicantId} ✅]
+    end
+
+    subgraph MISSING ["❌ Backend — What's MISSING"]
+        M1[POST /add ❌]
+        M2[GET /list ❌]
+        M3[PATCH /{id}/status ❌]
+        M4[POST /{id}/documents ❌]
+        M5[POST /auth/login ❌]
+        M6[BCrypt password hashing ❌]
+        M7[JWT / session tokens ❌]
+        M8[@Valid + @ControllerAdvice ❌]
+    end
+
+    subgraph DB ["✅ Database (Flyway)"]
+        DB1[applicants ✅]
+        DB2[genders ✅]
+        DB3[nationalities ✅]
+        DB4[contact columns ✅]
+        DB5[email VARCHAR 50 ⚠️ too short]
+        DB6[password_hash column exists<br/>but never populated ⚠️]
+    end
+
+    subgraph FRONT ["✅ Frontend — What's DONE"]
+        FE1[Home page ✅]
+        FE2[Register stepper UI ✅]
+        FE3[Validation & rules ✅]
+        FE4[Reviewer UI ✅]
+        FE5[Dashboard UI ✅]
+    end
+
+    subgraph FRONTMISS ["❌ Frontend — What's MISSING"]
+        FM1[Auth guards ❌]
+        FM2[Token storage ❌]
+        FM3[Real API calls for login ❌]
+        FM4[Reviewer loads from API ❌]
+        FM5[Dashboard fetches data ❌]
+        FM6[File upload wiring ❌]
+    end
+
+    style X1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X3 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X4 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X5 fill:#ffcccc,stroke:#cc0000,color:#000
+    style E2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style F2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H3 fill:#ffcccc,stroke:#cc0000,color:#000
+
+    style BACKEND fill:#e6f5e6,stroke:#2e7d32
+    style DB fill:#e6f5e6,stroke:#2e7d32
+    style FRONT fill:#e6f5e6,stroke:#2e7d32
+    style MISSING fill:#fff0f0,stroke:#cc0000
+    style FRONTMISS fill:#fff0f0,stroke:#cc0000
+```
+
+---
+
+## 📊 Visual Legend
+
+| Symbol | Meaning |
+|---|---|
+| ✅ Green | Implemented and working |
+| ❌ Red | Missing / broken |
+| ⚠️ Orange | Present but incomplete |
+| `.  .` dotted arrow | Data flow that *should* exist but doesn't |
+| `---` solid arrow | Actual flow |
+
+---
+
+## 🗺️ Where You Currently Are
+
+**You are sitting at this exact point:**
+
+```
+Frontend Register Step 5  ──POST──▶  /api/applicants/add  ──▶  ❌ 404
+```
+
+Everything **up to** the submit button on Step 5 works visually. The moment a user clicks **"Submit Application"**, the app **fails** because:
+
+1. `POST /api/applicants/add` does not exist.
+2. Even if it did, the backend would not return `applicationId`, which `submitRegistration()` requires before redirecting to `/dashboard`.
+
+**Login is a fake flow** — it always "succeeds" and jumps to `/dashboard` with zero auth.
+
+**Reviewer portal is a demo** — the data lives in `reviewer.component.ts`, not the database.
+
+---
+
+## 🎯 Summary Table — Gap Matrix
+
+| Layer | Done | Missing | % Complete |
+|---|---|---|---|
+| **DB / Migrations** | 4/4 tables | `email` too short, `password_hash` never written | ~85% |
+| **Backend Endpoints** | 5 endpoints | `/add`, `/list`, `/status`, `/documents`, `/auth` | ~50% |
+| **Backend Security** | None | BCrypt, JWT, auth, validation | ~5% |
+| **Frontend UI** | All pages built | — | ~95% |
+| **Frontend Wiring** | Home + Register steps 1–4 | Submit call, login call, reviewer calls, guards | ~40% |
+| **Integration (FE↔BE)** | CORS configured | Endpoint names, payload fields, return types | ~25% |
+
+---
+
+## 🚦 Critical Path to "Working Demo"
+
+To move from **current state** to **working end-to-end flow**, these four must be done first (in order):
+
+```
+1. POST /api/applicants/add  →  returns { applicationId }
+2. Fix DTO fields to match frontend payload
+3. GET  /api/applicants/list
+4. PATCH /api/applicants/{id}/status
+```
+
+After these four, the **register → dashboard** and **reviewer → approve/reject** flows will actually work. Everything else (auth, file uploads, polish) is layered on top.V
+## 🚦 Critical Path to "Working Demo"# Customer Onboarding — Current State & Gaps Flowchart
+
+```mermaid
+flowchart TD
+    A([Start: Applicant Portal]) --> B[Home Page]
+    B --> C{User Choice}
+
+    C -->|Start Application| D[Register Component<br/>5-Step Stepper]
+    C -->|Sign In| E[Login Component]
+    C -->|Staff Access| F[Reviewer Login]
+
+    %% REGISTER FLOW
+    D --> D1[Step 1: Personal Info]
+    D1 --> D2[Step 2: Contact Info]
+    D2 --> D3[Step 3: Security/Password]
+    D3 --> D4[Step 4: Documents Upload]
+    D4 --> D5[Step 5: Review & Submit]
+
+    D5 --> D6{POST /api/applicants/add}
+    D6 -->|✅ EXISTS? NO ❌| X1[❌ 404 - Endpoint Missing]
+    D6 -->|IF existed| D7[Backend: savePersonalDetails]
+    D7 --> D8[Returns row count only<br/>❌ NO applicationId]
+    D8 --> X2[❌ Frontend expects applicationId]
+
+    D4 -.documents never sent.-> X3[❌ No upload endpoint<br/>Files discarded]
+
+    D3 -.password sent but.-> X4[❌ Backend ignores password<br/>password_hash never written]
+
+    D2 -.field mismatch.-> X5[❌ phone vs phoneNumber<br/>address vs residentialAddress]
+
+    %% LOGIN FLOW
+    E --> E1[login method]
+    E1 -.no API call.-> E2[❌ Navigates to /dashboard<br/>No auth, no token, no guard]
+    E2 --> G[Dashboard Component]
+    G --> G1[Static cards only<br/>❌ No data fetched]
+
+    %% REVIEWER FLOW
+    F --> F1[reviewer-login]
+    F1 -.no auth check.-> F2[❌ Any credentials accepted]
+    F2 --> H[Reviewer Component]
+    H --> H1[Hardcoded applicants array<br/>❌ GET /list missing]
+    H1 --> H2{Approve / Reject}
+    H2 -.no endpoint.-> H3[❌ PATCH /status missing<br/>Only updates local array]
+
+    %% BACKEND STATE
+    subgraph BACKEND ["✅ Backend — What EXISTS"]
+        B1[GET /gender ✅]
+        B2[GET /nationalities ✅]
+        B3[POST /personal-details ✅<br/>returns DTO, no ID]
+        B4[POST /contact-details ✅]
+        B5[GET /{applicantId} ✅]
+    end
+
+    subgraph MISSING ["❌ Backend — What's MISSING"]
+        M1[POST /add ❌]
+        M2[GET /list ❌]
+        M3[PATCH /{id}/status ❌]
+        M4[POST /{id}/documents ❌]
+        M5[POST /auth/login ❌]
+        M6[BCrypt password hashing ❌]
+        M7[JWT / session tokens ❌]
+        M8[@Valid + @ControllerAdvice ❌]
+    end
+
+    subgraph DB ["✅ Database (Flyway)"]
+        DB1[applicants ✅]
+        DB2[genders ✅]
+        DB3[nationalities ✅]
+        DB4[contact columns ✅]
+        DB5[email VARCHAR 50 ⚠️ too short]
+        DB6[password_hash column exists<br/>but never populated ⚠️]
+    end
+
+    subgraph FRONT ["✅ Frontend — What's DONE"]
+        FE1[Home page ✅]
+        FE2[Register stepper UI ✅]
+        FE3[Validation & rules ✅]
+        FE4[Reviewer UI ✅]
+        FE5[Dashboard UI ✅]
+    end
+
+    subgraph FRONTMISS ["❌ Frontend — What's MISSING"]
+        FM1[Auth guards ❌]
+        FM2[Token storage ❌]
+        FM3[Real API calls for login ❌]
+        FM4[Reviewer loads from API ❌]
+        FM5[Dashboard fetches data ❌]
+        FM6[File upload wiring ❌]
+    end
+
+    style X1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X3 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X4 fill:#ffcccc,stroke:#cc0000,color:#000
+    style X5 fill:#ffcccc,stroke:#cc0000,color:#000
+    style E2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style F2 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H1 fill:#ffcccc,stroke:#cc0000,color:#000
+    style H3 fill:#ffcccc,stroke:#cc0000,color:#000
+
+    style BACKEND fill:#e6f5e6,stroke:#2e7d32
+    style DB fill:#e6f5e6,stroke:#2e7d32
+    style FRONT fill:#e6f5e6,stroke:#2e7d32
+    style MISSING fill:#fff0f0,stroke:#cc0000
+    style FRONTMISS fill:#fff0f0,stroke:#cc0000
+```
+
+---
+
+## 📊 Visual Legend
+
+| Symbol | Meaning |
+|---|---|
+| ✅ Green | Implemented and working |
+| ❌ Red | Missing / broken |
+| ⚠️ Orange | Present but incomplete |
+| `.  .` dotted arrow | Data flow that *should* exist but doesn't |
+| `---` solid arrow | Actual flow |
+
+---
+
+## 🗺️ Where You Currently Are
+
+**You are sitting at this exact point:**
+
+```
+Frontend Register Step 5  ──POST──▶  /api/applicants/add  ──▶  ❌ 404
+```
+
+Everything **up to** the submit button on Step 5 works visually. The moment a user clicks **"Submit Application"**, the app **fails** because:
+
+1. `POST /api/applicants/add` does not exist.
+2. Even if it did, the backend would not return `applicationId`, which `submitRegistration()` requires before redirecting to `/dashboard`.
+
+**Login is a fake flow** — it always "succeeds" and jumps to `/dashboard` with zero auth.
+
+**Reviewer portal is a demo** — the data lives in `reviewer.component.ts`, not the database.
+
+---
+
+## 🎯 Summary Table — Gap Matrix
+
+| Layer | Done | Missing | % Complete |
+|---|---|---|---|
+| **DB / Migrations** | 4/4 tables | `email` too short, `password_hash` never written | ~85% |
+| **Backend Endpoints** | 5 endpoints | `/add`, `/list`, `/status`, `/documents`, `/auth` | ~50% |
+| **Backend Security** | None | BCrypt, JWT, auth, validation | ~5% |
+| **Frontend UI** | All pages built | — | ~95% |
+| **Frontend Wiring** | Home + Register steps 1–4 | Submit call, login call, reviewer calls, guards | ~40% |
+| **Integration (FE↔BE)** | CORS configured | Endpoint names, payload fields, return types | ~25% |
+
+---
+
+## 🚦 Critical Path to "Working Demo"
+
+To move from **current state** to **working end-to-end flow**, these four must be done first (in order):
+
+```
+1. POST /api/applicants/add  →  returns { applicationId }
+2. Fix DTO fields to match frontend payload
+3. GET  /api/applicants/list
+4. PATCH /api/applicants/{id}/status
+```
+
+After these four, the **register → dashboard** and **reviewer → approve/reject** flows will actually work. Everything else (auth, file uploads, polish) is layered on top.
+
+To move from **current state** to **working end-to-end flow**, these four must be done first (in order):
+
+```
+1. POST /api/applicants/add  →  returns { applicationId }
+2. Fix DTO fields to match frontend payload
+3. GET  /api/applicants/list
+4. PATCH /api/applicants/{id}/status
+```
+
+After these four, the **register → dashboard** and **reviewer → approve/reject** flows will actually work. Everything else (auth, file uploads, polish) is layered on top.
+---
+
+## 🚦 Critical Path to "Working Demo"
+
+To move from **current state** to **working end-to-end flow**, these four must be done first (in order):
+
+```
+1. POST /api/applicants/add  →  returns { applicationId }
+2. Fix DTO fields to match frontend payload
+3. GET  /api/applicants/list
+4. PATCH /api/applicants/{id}/status
+```
+
+After these four, the **register → dashboard** and **reviewer → approve/reject** flows will actually work. Everything else (auth, file uploads, polish) is layered on top.
+
+Everything **up to** the submit button on Step 5 works visually. The moment a user clicks **"Submit Application"**, the app **fails** because:
+
+1. `POST /api/applicants/add` does not exist.
+2. Even if it did, the backend would not return `applicationId`, which `submitRegistration()` requires before redirecting to `/dashboard`.
+
+**Login is a fake flow** — it always "succeeds" and jumps to `/dashboard` with zero auth.
+
+**Reviewer portal is a demo** — the data lives in `reviewer.component.ts`, not the database.
+
+---
+
+## 🎯 Summary Table — Gap Matrix
+
+| Layer | Done | Missing | % Complete |
+|---|---|---|---|
+| **DB / Migrations** | 4/4 tables | `email` too short, `password_hash` never written | ~85% |
+| **Backend Endpoints** | 5 endpoints | `/add`, `/list`, `/status`, `/documents`, `/auth` | ~50% |
+| **Backend Security** | None | BCrypt, JWT, auth, validation | ~5% |
+| **Frontend UI** | All pages built | — | ~95% |
+| **Frontend Wiring** | Home + Register steps 1–4 | Submit call, login call, reviewer calls, guards | ~40% |
+| **Integration (FE↔BE)** | CORS configured | Endpoint names, payload fields, return types | ~25% |
+
+---
+
+## 🚦 Critical Path to "Working Demo"
+
+To move from **current state** to **working end-to-end flow**, these four must be done first (in order):
+
+```
+1. POST /api/applicants/add  →  returns { applicationId }
+2. Fix DTO fields to match frontend payload
+3. GET  /api/applicants/list
+4. PATCH /api/applicants/{id}/status
+```
+
+After these four, the **register → dashboard** and **reviewer → approve/reject** flows will actually work. Everything else (auth, file uploads, polish) is layered on top.

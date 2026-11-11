@@ -1,0 +1,54 @@
+
+<div class="application-page">
+
+  <button class="back-button" (click)="goBack()">← Back to Dashboard</button>
+
+  <h1>My Application</h1>
+  <p class="subtitle">View your submitted onboarding information.</p>
+
+  <div *ngIf="loading" class="message">
+    Loading your application...
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && applicant" class="application-card">
+
+    <div class="status-section">
+      <div>
+        <h2>Application Details</h2>
+        <p>Application ID: {{ applicant.id }}</p>
+      </div>
+
+      <span class="status">
+        {{ getStatus(applicant.application_status) }}
+      </span>
+    </div>
+
+    <h3>Personal Information</h3>
+    <div class="details-grid">
+      <div><strong>Full Name</strong><p>{{ applicant.full_name }}</p></div>
+      <div><strong>Date of Birth</strong><p>{{ applicant.date_of_birth | date:'mediumDate' }}</p></div>
+      <div><strong>Gender</strong><p>{{ applicant.gender }}</p></div>
+      <div><strong>Nationality</strong><p>{{ applicant.nationality }}</p></div>
+      <div><strong>Identification Type</strong><p>{{ applicant.identification_type }}</p></div>
+      <div><strong>Identification Number</strong><p>{{ applicant.identification_number }}</p></div>
+    </div>
+
+    <h3>Contact Information</h3>
+    <div class="details-grid">
+      <div><strong>Email</strong><p>{{ applicant.email }}</p></div>
+      <div><strong>Phone Number</strong><p>{{ applicant.phone_number }}</p></div>
+      <div><strong>County</strong><p>{{ applicant.county }}</p></div>
+      <div><strong>Town</strong><p>{{ applicant.town }}</p></div>
+      <div><strong>Residential Address</strong><p>{{ applicant.residential_address }}</p></div>
+    </div>
+
+    <h3>Application Progress</h3>
+    <p>Onboarding Step: {{ applicant.onboarding_step }}</p>
+    <p>Submitted: {{ applicant.created_at | date:'medium' }}</p>
+
+  </div>
+</div>

@@ -1,0 +1,143 @@
+<div class="profile-page">
+
+  <header class="profile-header">
+    <a routerLink="/dashboard" class="back-link">← Back to Dashboard</a>
+
+    <span class="section-label">KCB CUSTOMER PORTAL</span>
+    <h1>My Profile</h1>
+    <p>View your personal and contact information.</p>
+  </header>
+
+  <div *ngIf="loading" class="message">
+    Loading your profile...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="!loading && applicant">
+
+    <section class="profile-card">
+
+      <div class="profile-banner">
+        <div class="profile-avatar">
+          {{ applicant.full_name?.charAt(0)?.toUpperCase() }}
+        </div>
+
+        <div>
+          <h2>{{ applicant.full_name }}</h2>
+          <p>Customer Account</p>
+        </div>
+      </div>
+
+      <div class="profile-content">
+
+        <section class="profile-section">
+          <h3>Personal Information</h3>
+
+          <div class="details-grid">
+            <div class="detail-item">
+              <label>Full Name</label>
+              <p>{{ applicant.full_name || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Date of Birth</label>
+              <p>{{ applicant.date_of_birth ? (applicant.date_of_birth | date:'mediumDate') : 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Gender</label>
+              <p>{{ applicant.gender || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Nationality</label>
+              <p>{{ applicant.nationality || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Identification Type</label>
+              <p>{{ applicant.identification_type || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Identification Number</label>
+              <p>{{ applicant.identification_number || 'Not provided' }}</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-section">
+          <h3>Contact Information</h3>
+
+          <div class="details-grid">
+            <div class="detail-item">
+              <label>Email Address</label>
+              <p>{{ applicant.email || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Phone Number</label>
+              <p>{{ applicant.phone_number || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>County</label>
+              <p>{{ applicant.county || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Town</label>
+              <p>{{ applicant.town || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Residential Address</label>
+              <p>{{ applicant.residential_address || 'Not provided' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Postal Address</label>
+              <p>{{ applicant.postal_address || 'Not provided' }}</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-section">
+          <h3>Account Information</h3>
+
+          <div class="details-grid">
+            <div class="detail-item">
+              <label>Application ID</label>
+              <p>{{ applicant.id }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Application Status</label>
+              <p>{{ applicant.application_status || 'Pending Review' }}</p>
+            </div>
+
+            <div class="detail-item">
+              <label>Registration Date</label>
+              <p>{{ applicant.created_at | date:'mediumDate' }}</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+    <div class="profile-note">
+      <span>🔒</span>
+      <p>Your personal information is protected. Contact KCB support if you need to update your details.</p>
+    </div>
+
+  </ng-container>
+
+  <footer class="profile-footer">
+    © 2026 KCB Digital Onboarding
+  </footer>
+
+</div>
