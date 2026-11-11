@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Create Profile | Digital Onboarding</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="form-page">
+    <header class="navbar">
+      <a href="index.html" class="brand">
+        <div class="brand-box">KCB</div>
+
+        <div>
+          <strong>Digital Onboarding</strong>
+          <small>Customer Portal</small>
+        </div>
+      </a>
+
+      <a href="index.html" class="back-link"> ← Home </a>
+    </header>
+
+    <main class="onboarding-page">
+      <div class="onboarding-header">
+        <span class="eyebrow">STEP 1 OF 3</span>
+
+        <h1>Create your applicant profile</h1>
+
+        <p>Enter your basic information to begin your onboarding.</p>
+      </div>
+
+      <div class="steps-indicator">
+        <div class="active">
+          <span>1</span>
+          Profile
+        </div>
+
+        <div>
+          <span>2</span>
+          Verification
+        </div>
+
+        <div>
+          <span>3</span>
+          Review
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-header">
+          <div>
+            <span class="eyebrow">PERSONAL DETAILS</span>
+            <h2>Tell us about yourself</h2>
+          </div>
+
+          <span class="step-label">01 / 03</span>
+        </div>
+
+        <form onsubmit="registerApplicant(event)">
+          <div class="form-grid">
+            <div class="field">
+              <label for="firstName">First Name</label>
+
+              <input
+                type="text"
+                id="firstName"
+                placeholder="Enter first name"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="lastName">Last Name</label>
+
+              <input
+                type="text"
+                id="lastName"
+                placeholder="Enter last name"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="phone">Phone Number</label>
+
+              <input
+                type="tel"
+                id="phone"
+                placeholder="07XX XXX XXX"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="email">Email Address</label>
+
+              <input
+                type="email"
+                id="email"
+                placeholder="example@email.com"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="idNumber">Identification Number</label>
+
+              <input
+                type="text"
+                id="idNumber"
+                placeholder="Enter identification number"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="dateOfBirth">Date of Birth</label>
+
+              <input type="date" id="dateOfBirth" required />
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+
+              <input
+                type="password"
+                id="password"
+                placeholder="Create password"
+                required
+              />
+
+              <small>Minimum 8 characters</small>
+            </div>
+
+            <div class="field">
+              <label for="confirmPassword">Confirm Password</label>
+
+              <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm password"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="demo-notice">
+            <span>🔒</span>
+
+            <p>
+              <strong>Demo environment</strong><br />
+              Do not enter real banking credentials or sensitive financial
+              information.
+            </p>
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" required />
+
+            <span>
+              I confirm that the information entered is for this demonstration
+              and understand that this is not a real banking application.
+            </span>
+          </label>
+
+          <button class="form-submit" type="submit">
+            Continue to Verification →
+          </button>
+        </form>
+
+        <div class="form-footer">
+          Already have an application?
+
+          <a href="login.html">Login</a>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
