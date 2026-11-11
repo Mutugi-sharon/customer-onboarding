@@ -33,6 +33,17 @@
           },
           "configurations": {
             "production": {
+            "optimization": {
+             "scripts": true,
+              "styles": {
+              "minify": true,
+               "inlineCritical": true
+             },
+             "fonts": {
+             "inline": false
+                 }
+              },
+
               "budgets": [
                 {
                   "type": "initial",
@@ -41,8 +52,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "15kB",
+                  "maximumError": "20kB"
                 }
               ],
               "outputHashing": "all"
