@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,6 +16,7 @@ import { AuthService } from './auth.service';
 export class LoginComponent {
   email = '';
   password = '';
+  showPassword = false;
   loading = false;
   errorMessage = '';
 
@@ -29,6 +31,7 @@ export class LoginComponent {
       this.errorMessage = 'Please enter email and password.';
       return;
     }
+
     this.loading = true;
     this.errorMessage = '';
 
@@ -44,5 +47,7 @@ export class LoginComponent {
     });
   }
 
-  goHome() { this.router.navigate(['/']); }
+  goHome() {
+    this.router.navigate(['/']);
+  }
 }

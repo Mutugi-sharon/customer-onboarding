@@ -1,3 +1,4 @@
+
 <div class="login-page">
   <div class="login-box">
     <h1>Welcome Back</h1>
@@ -5,12 +6,34 @@
 
     <form (ngSubmit)="login()">
       <label>Email Address</label>
-      <input type="email" name="email" [(ngModel)]="email" placeholder="Enter your email" required />
+      <input
+        type="email"
+        name="email"
+        [(ngModel)]="email"
+        placeholder="Enter your email"
+        required
+      />
 
       <label>Password</label>
-      <input type="password" name="password" [(ngModel)]="password" placeholder="Enter your password" required />
+      <div class="password-field">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Enter your password"
+          required
+        />
 
-      <p *ngIf="errorMessage" style="color: red; font-size: 13px; margin-bottom: 10px;">
+        <button
+          type="button"
+          class="toggle-password"
+          (click)="showPassword = !showPassword"
+        >
+          {{ showPassword ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+
+      <p *ngIf="errorMessage" class="error-message">
         {{ errorMessage }}
       </p>
 
@@ -19,6 +42,8 @@
       </button>
     </form>
 
-    <button class="home-btn" (click)="goHome()">Back to Home</button>
+    <button class="home-btn" type="button" (click)="goHome()">
+      Back to Home
+    </button>
   </div>
 </div>

@@ -4,721 +4,826 @@
 
     <!-- BRAND -->
     <div class="brand">
-      <div class="brand-mark">K</div>
+      <div class="brand-logo">K</div>
       <div>
-        <strong>Customer Onboarding</strong>
-        <small>Secure digital application</small>
+        <h2>KCB BANK</h2>
+        <p>Customer Onboarding</p>
       </div>
     </div>
 
     <!-- HEADER -->
-    <div class="header">
+    <div class="register-header" *ngIf="!successMessage">
       <span class="eyebrow">DIGITAL ONBOARDING</span>
-      <h1>Open your account</h1>
+      <h1>{{ otpStage ? 'Verify Your Email' : 'Create Your Account' }}</h1>
       <p>
-        Complete your application securely. Your information is protected
-        throughout the onboarding process.
+        {{
+          otpStage
+            ? 'Enter the verification code sent to your email address.'
+            : 'Complete the steps below to open your digital banking account.'
+        }}
       </p>
     </div>
 
-    <!-- PROGRESS STEPPER -->
-    <div class="premium-stepper">
+    <!-- PROGRESS AREA -->
+    <div class="progress-section"
+         *ngIf="!otpStage && !successMessage">
 
-      <div class="premium-step" [class.active]="step === 1" [class.completed]="step > 1">
-        <div class="premium-step-number">01</div>
-        <div class="premium-step-info">
-          <span>STEP 01</span>
-          <strong>Personal</strong>
-          <small>Your details</small>
+      <div class="progress-cards">
+
+        <div class="bank-card bank-card-back">
+          <div class="card-chip"></div>
+          <div class="card-lines"></div>
         </div>
+
+        <div class="bank-card bank-card-front">
+          <div class="card-top">
+            <span>KCB</span>
+            <span class="card-symbol">✦</span>
+          </div>
+
+          <div class="card-chip"></div>
+
+          <div class="card-bottom">
+            <span>DIGITAL BANKING</span>
+            <span>SECURE</span>
+          </div>
+        </div>
+
       </div>
 
-      <div class="premium-step" [class.active]="step === 2" [class.completed]="step > 2">
-        <div class="premium-step-number">02</div>
-        <div class="premium-step-info">
-          <span>STEP 02</span>
-          <strong>Contact</strong>
-          <small>How to reach you</small>
+      <div class="stepper">
+
+        <div class="step-item"
+             [class.active]="step >= 1"
+             [class.current]="step === 1">
+          <div class="step-circle">
+            <span *ngIf="step > 1">✓</span>
+            <span *ngIf="step === 1">1</span>
+          </div>
+          <span>Personal</span>
         </div>
+
+        <div class="step-line" [class.completed]="step > 1"></div>
+
+        <div class="step-item"
+             [class.active]="step >= 2"
+             [class.current]="step === 2">
+          <div class="step-circle">
+            <span *ngIf="step > 2">✓</span>
+            <span *ngIf="step <= 2">2</span>
+          </div>
+          <span>Contact</span>
+        </div>
+
+        <div class="step-line" [class.completed]="step > 2"></div>
+
+        <div class="step-item"
+             [class.active]="step >= 3"
+             [class.current]="step === 3">
+          <div class="step-circle">
+            <span *ngIf="step > 3">✓</span>
+            <span *ngIf="step <= 3">3</span>
+          </div>
+          <span>Security</span>
+        </div>
+
+        <div class="step-line" [class.completed]="step > 3"></div>
+
+        <div class="step-item"
+             [class.active]="step >= 4"
+             [class.current]="step === 4">
+          <div class="step-circle">
+            <span *ngIf="step > 4">✓</span>
+            <span *ngIf="step <= 4">4</span>
+          </div>
+          <span>Documents</span>
+        </div>
+
+        <div class="step-line" [class.completed]="step > 4"></div>
+
+        <div class="step-item"
+             [class.active]="step === 5"
+             [class.current]="step === 5">
+          <div class="step-circle">5</div>
+          <span>Review</span>
+        </div>
+
       </div>
 
-      <div class="premium-step" [class.active]="step === 3" [class.completed]="step > 3">
-        <div class="premium-step-number">03</div>
-        <div class="premium-step-info">
-          <span>STEP 03</span>
-          <strong>Security</strong>
-          <small>Private details</small>
-        </div>
-      </div>
-
-      <div class="premium-step" [class.active]="step === 4" [class.completed]="step > 4">
-        <div class="premium-step-number">04</div>
-        <div class="premium-step-info">
-          <span>STEP 04</span>
-          <strong>Documents</strong>
-          <small>KYC verification</small>
-        </div>
-      </div>
-
-      <div class="premium-step" [class.active]="step === 5">
-        <div class="premium-step-number">05</div>
-        <div class="premium-step-info">
-          <span>STEP 05</span>
-          <strong>Review</strong>
-          <small>Submit application</small>
+      <div class="progress-track">
+        <div class="progress-fill"
+             [style.width.%]="(step - 1) * 25">
         </div>
       </div>
 
     </div>
 
     <!-- ERROR MESSAGE -->
-    <div class="error-banner" *ngIf="errorMessage">
-      <div class="error-icon">!</div>
-      <span>{{ errorMessage }}</span>
+    <div class="alert error-alert"
+         *ngIf="errorMessage">
+      <span>!</span>
+      {{ errorMessage }}
     </div>
 
     <!-- SUCCESS MESSAGE -->
-    <div class="success-banner" *ngIf="successMessage">
-      {{ successMessage }}
+    <div class="success-section"
+         *ngIf="successMessage">
 
-      <button type="button" (click)="goToLogin()">
-        Proceed to Login
-      </button>
-    </div>
+      <div class="success-icon">✓</div>
 
-    <!-- STEP 1: PERSONAL INFORMATION -->
-    <div class="step-content" *ngIf="step === 1">
+      <h2>Application Submitted!</h2>
 
-      <div class="section-heading">
-        <span>01</span>
-        <div>
-          <h2>Personal Information</h2>
-          <p>Fields marked with <strong>*</strong> are required.</p>
-        </div>
-      </div>
+      <p>{{ successMessage }}</p>
 
-      <div class="field">
-        <label for="fullName">Full name <span class="required-label">*</span></label>
-        <input
-          id="fullName"
-          type="text"
-          [(ngModel)]="fullName"
-          placeholder="Enter your full name"
-        />
-      </div>
-
-      <div class="field">
-        <label for="dateOfBirth">Date of birth <span class="required-label">*</span></label>
-        <input
-          id="dateOfBirth"
-          type="date"
-          [(ngModel)]="dateOfBirth"
-        />
-      </div>
-
-      <div class="field">
-        <label for="nationality">Nationality <span class="required-label">*</span></label>
-        <select id="nationality" [(ngModel)]="nationality">
-          <option value="Kenyan">Kenyan</option>
-          <option value="Ugandan">Ugandan</option>
-          <option value="Tanzanian">Tanzanian</option>
-          <option value="Rwandan">Rwandan</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="gender">Gender <span class="required-label">*</span></label>
-        <select id="gender" [(ngModel)]="gender">
-          <option value="">Select gender</option>
-          <option value="Female">Female</option>
-          <option value="Male">Male</option>
-          <option value="Other">Other</option>
-          <option value="Prefer not to say">Prefer not to say</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="identificationNumber">
-          National ID number <span class="required-label">*</span>
-        </label>
-
-        <input
-          id="identificationNumber"
-          type="text"
-          inputmode="numeric"
-          maxlength="9"
-          [(ngModel)]="identificationNumber"
-          (ngModelChange)="onIdentificationNumberChange($event)"
-          placeholder="Enter your 9-digit National ID"
-        />
-
-        <small class="field-hint">Enter exactly 9 digits.</small>
-
-        <div class="field-error" *ngIf="identificationNumber && !nationalIdValid">
-          National ID must contain exactly 9 digits.
-        </div>
-      </div>
-
-    </div>
-
-    <!-- STEP 2: CONTACT INFORMATION -->
-    <div class="step-content" *ngIf="step === 2">
-
-      <div class="section-heading">
-        <span>02</span>
-        <div>
-          <h2>Contact Information</h2>
-          <p>All fields in this section are required.</p>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="email">Email address <span class="required-label">*</span></label>
-
-        <input
-          id="email"
-          type="email"
-          [(ngModel)]="email"
-          placeholder="you@example.com"
-          [class.invalid]="email && !emailValid"
-        />
-
-        <div class="field-error" *ngIf="email && !emailValid">
-          Please enter a valid email address.
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Mobile number <span class="required-label">*</span></label>
-
-        <div class="phone-row">
-          <select [(ngModel)]="countryCode">
-            <option *ngFor="let country of countryCodes" [value]="country.code">
-              {{ country.label }} {{ country.code }}
-            </option>
-          </select>
-
-          <input
-            type="tel"
-            [(ngModel)]="phone"
-            placeholder="712345678"
-            maxlength="9"
-            [class.invalid]="phone && !phoneValid"
-          />
-        </div>
-
-        <small class="field-hint">
-          Enter your number without the country code.
-        </small>
-
-        <div class="field-error" *ngIf="phone && !phoneValid">
-          Enter {{ selectedCountry?.digits }} digits for {{ selectedCountry?.label }}.
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="county">County <span class="required-label">*</span></label>
-        <input
-          id="county"
-          type="text"
-          [(ngModel)]="county"
-          placeholder="Enter your county"
-        />
-      </div>
-
-      <div class="field">
-        <label for="town">Town <span class="required-label">*</span></label>
-        <input
-          id="town"
-          type="text"
-          [(ngModel)]="town"
-          placeholder="Enter your town"
-        />
-      </div>
-
-    </div>
-
-    <!-- STEP 3: SECURITY -->
-    <div class="step-content" *ngIf="step === 3">
-
-      <div class="section-heading">
-        <span>03</span>
-        <div>
-          <h2>Private &amp; Security Information</h2>
-          <p>
-            Required fields are marked with <strong>*</strong>.
-            Additional information is optional.
-          </p>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="password">Password <span class="required-label">*</span></label>
-
-        <div class="password-input">
-          <input
-            id="password"
-            [type]="showPassword ? 'text' : 'password'"
-            [(ngModel)]="password"
-            placeholder="Create a secure password"
-          />
-
-          <button
-            type="button"
-            class="eye-btn"
-            (click)="showPassword = !showPassword"
-          >
-            {{ showPassword ? "◉" : "◌" }}
-          </button>
-        </div>
-
-        <div class="password-rules" [class.valid]="passwordValid">
-          <span>8+ characters</span>
-          <span>Letter</span>
-          <span>Number</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="confirmPassword">Confirm password <span class="required-label">*</span></label>
-
-        <div class="password-input">
-          <input
-            id="confirmPassword"
-            [type]="showConfirmPassword ? 'text' : 'password'"
-            [(ngModel)]="confirmPassword"
-            placeholder="Re-enter your password"
-          />
-
-          <button
-            type="button"
-            class="eye-btn"
-            (click)="showConfirmPassword = !showConfirmPassword"
-          >
-            {{ showConfirmPassword ? "◉" : "◌" }}
-          </button>
-        </div>
-
-        <div class="field-error" *ngIf="confirmPassword && !passwordsMatch">
-          Your passwords do not match.
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="occupation">
-          Occupation <span class="optional-label">Optional</span>
-        </label>
-        <input
-          id="occupation"
-          type="text"
-          [(ngModel)]="occupation"
-          placeholder="e.g. Software Developer"
-        />
-      </div>
-
-      <div class="field">
-        <label for="employer">
-          Employer <span class="optional-label">Optional</span>
-        </label>
-        <input
-          id="employer"
-          type="text"
-          [(ngModel)]="employer"
-          placeholder="Enter your employer"
-        />
-      </div>
-
-      <div class="field">
-        <label for="monthlyIncome">
-          Monthly income <span class="optional-label">Optional</span>
-        </label>
-        <input
-          id="monthlyIncome"
-          type="text"
-          [(ngModel)]="monthlyIncome"
-          placeholder="e.g. KSh 50,000"
-        />
-      </div>
-
-    </div>
-
-    <!-- STEP 4: DOCUMENTS / KYC -->
-    <div class="step-content" *ngIf="step === 4">
-
-      <div class="section-heading">
-        <span>04</span>
-        <div>
-          <h2>Documents / KYC</h2>
-          <p>
-            Upload the required documents below.
-            Documents marked Optional are not required to continue.
-          </p>
-        </div>
-      </div>
-
-      <div class="document-notice">
-        <div class="document-notice-icon">!</div>
-        <div>
-          <strong>Required &amp; optional documents</strong>
-          <p>
-            Required documents must be uploaded before you can continue.
-            Optional documents may be provided if available.
-            Maximum file size is 5MB per document.
-          </p>
-        </div>
-      </div>
-
-      <!-- NATIONAL ID -->
-      <div class="upload-card">
-        <div class="upload-icon">ID</div>
-
-        <div class="upload-content">
-          <strong>
-            National ID / Passport
-            <span class="required-label">Required</span>
-          </strong>
-
-          <small>PDF, JPG or PNG · Maximum 5MB</small>
-
-          <label class="upload-button" *ngIf="!idDocument">
-            Choose file
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              (change)="onFileSelected($event, 'id')"
-            />
-          </label>
-
-          <div class="uploaded-file" *ngIf="idDocument">
-            <strong>✓ {{ getFileName(idDocument) }}</strong>
-            <button type="button" (click)="removeDocument('id')">Remove</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- KRA -->
-      <div class="upload-card">
-        <div class="upload-icon">KRA</div>
-
-        <div class="upload-content">
-          <strong>
-            KRA PIN Certificate
-            <span class="required-label">Required</span>
-          </strong>
-
-          <small>PDF, JPG or PNG · Maximum 5MB</small>
-
-          <label class="upload-button" *ngIf="!kraDocument">
-            Choose file
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              (change)="onFileSelected($event, 'kra')"
-            />
-          </label>
-
-          <div class="uploaded-file" *ngIf="kraDocument">
-            <strong>✓ {{ getFileName(kraDocument) }}</strong>
-            <button type="button" (click)="removeDocument('kra')">Remove</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- PASSPORT PHOTO -->
-      <div class="upload-card">
-        <div class="upload-icon">IMG</div>
-
-        <div class="upload-content">
-          <strong>
-            Passport-size Photo
-            <span class="required-label">Required</span>
-          </strong>
-
-          <small>JPG or PNG · Maximum 5MB</small>
-
-          <label class="upload-button" *ngIf="!passportPhoto">
-            Choose file
-            <input
-              type="file"
-              accept=".jpg,.jpeg,.png"
-              (change)="onFileSelected($event, 'photo')"
-            />
-          </label>
-
-          <div class="uploaded-file" *ngIf="passportPhoto">
-            <strong>✓ {{ getFileName(passportPhoto) }}</strong>
-            <button type="button" (click)="removeDocument('photo')">Remove</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- OPTIONAL PROOF OF INCOME -->
-      <div class="upload-card optional">
-        <div class="upload-icon">INC</div>
-
-        <div class="upload-content">
-          <strong>Proof of Income</strong>
-          <span class="optional-label">Optional</span>
-
-          <small>PDF, JPG or PNG · Maximum 5MB</small>
-
-          <label class="upload-button secondary" *ngIf="!incomeDocument">
-            Choose file
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              (change)="onFileSelected($event, 'income')"
-            />
-          </label>
-
-          <div class="uploaded-file" *ngIf="incomeDocument">
-            <strong>✓ {{ getFileName(incomeDocument) }}</strong>
-            <button type="button" (click)="removeDocument('income')">Remove</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- OPTIONAL EMPLOYMENT LETTER -->
-      <div class="upload-card optional">
-        <div class="upload-icon">EMP</div>
-
-        <div class="upload-content">
-          <strong>Employment Letter</strong>
-          <span class="optional-label">Optional</span>
-
-          <small>PDF, JPG or PNG · Maximum 5MB</small>
-
-          <label class="upload-button secondary" *ngIf="!employmentLetter">
-            Choose file
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              (change)="onFileSelected($event, 'employment')"
-            />
-          </label>
-
-          <div class="uploaded-file" *ngIf="employmentLetter">
-            <strong>✓ {{ getFileName(employmentLetter) }}</strong>
-            <button type="button" (click)="removeDocument('employment')">Remove</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- STEP 5: REVIEW & SUBMIT -->
-    <div class="step-content" *ngIf="step === 5">
-
-      <div class="section-heading">
-        <span>05</span>
-        <div>
-          <h2>Review &amp; Submit</h2>
-          <p>
-            Review your information carefully.
-            Use Edit to correct any section before submitting.
-          </p>
-        </div>
-      </div>
-
-      <!-- PERSONAL INFORMATION -->
-      <div class="review-card">
-
-        <div class="review-title">
-          <span>Personal Information</span>
-          <button type="button" class="review-edit" (click)="editStep(1)">
-            Edit
-          </button>
-        </div>
-
-        <div class="review-row">
-          <span>Full name</span>
-          <strong>{{ fullName }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>Date of birth</span>
-          <strong>{{ dateOfBirth }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>Nationality</span>
-          <strong>{{ nationality }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>Gender</span>
-          <strong>{{ gender }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>National ID</span>
-          <strong>{{ identificationNumber }}</strong>
-        </div>
-
-      </div>
-
-      <!-- CONTACT INFORMATION -->
-      <div class="review-card">
-
-        <div class="review-title">
-          <span>Contact Information</span>
-          <button type="button" class="review-edit" (click)="editStep(2)">
-            Edit
-          </button>
-        </div>
-
-        <div class="review-row">
-          <span>Email</span>
-          <strong>{{ email }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>Mobile</span>
-          <strong>{{ fullInternationalPhone }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>County</span>
-          <strong>{{ county }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>Town</span>
-          <strong>{{ town }}</strong>
-        </div>
-
-      </div>
-
-      <!-- ADDITIONAL INFORMATION -->
-      <div class="review-card">
-
-        <div class="review-title">
-          <span>Additional Information</span>
-          <button type="button" class="review-edit" (click)="editStep(3)">
-            Edit
-          </button>
-        </div>
-
-        <div class="review-row">
-          <span>Occupation</span>
-          <strong>{{ occupation || 'Not provided — Optional' }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>Employer</span>
-          <strong>{{ employer || 'Not provided — Optional' }}</strong>
-        </div>
-
-        <div class="review-row">
-          <span>Monthly income</span>
-          <strong>{{ monthlyIncome || 'Not provided — Optional' }}</strong>
-        </div>
-
-      </div>
-
-      <!-- DOCUMENTS -->
-      <div class="review-card">
-
-        <div class="review-title">
-          <span>Documents</span>
-          <button type="button" class="review-edit" (click)="editStep(4)">
-            Edit
-          </button>
-        </div>
-
-        <div class="document-review-row">
-          <span>National ID / Passport</span>
-          <strong class="verified">✓ {{ getFileName(idDocument) }}</strong>
-        </div>
-
-        <div class="document-review-row">
-          <span>KRA PIN Certificate</span>
-          <strong class="verified">✓ {{ getFileName(kraDocument) }}</strong>
-        </div>
-
-        <div class="document-review-row">
-          <span>Passport Photo</span>
-          <strong class="verified">✓ {{ getFileName(passportPhoto) }}</strong>
-        </div>
-
-        <div class="document-review-row" *ngIf="incomeDocument">
-          <span>Proof of Income</span>
-          <strong class="verified">✓ {{ getFileName(incomeDocument) }}</strong>
-        </div>
-
-        <div class="document-review-row" *ngIf="employmentLetter">
-          <span>Employment Letter</span>
-          <strong class="verified">✓ {{ getFileName(employmentLetter) }}</strong>
-        </div>
-
-      </div>
-
-      <!-- DECLARATION -->
-      <div class="declaration">
-        <div class="declaration-icon">✓</div>
-
-        <div>
-          <strong>Applicant declaration</strong>
-          <p>
-            I confirm that the information provided in this application is
-            accurate and complete to the best of my knowledge.
-          </p>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- NAVIGATION BUTTONS -->
-    <div class="actions">
-
-      <button
-        type="button"
-        class="back-btn"
-        *ngIf="step > 1 && !successMessage"
-        (click)="previousStep()"
-      >
-        Back
-      </button>
-
-      <button
-        type="button"
-        class="continue-btn"
-        *ngIf="step < 5 && !successMessage"
-        (click)="nextStep()"
-      >
-        Continue
-      </button>
-
-      <button
-        type="button"
-        class="continue-btn"
-        *ngIf="step === 5 && !successMessage"
-        (click)="submitRegistration()"
-        [disabled]="loading"
-      >
-        {{ loading ? 'Submitting...' : 'Submit Application' }}
+      <button type="button"
+              class="primary-btn"
+              (click)="goToLogin()">
+        Go to Login
       </button>
 
     </div>
 
-    <!-- SECURITY NOTE -->
-    <div class="security-note">
-      <span>🔒</span>
+    <!-- REGISTRATION FORM -->
+    <ng-container *ngIf="!otpStage && !successMessage">
 
-      <div>
-        <strong>Your information is protected</strong>
-        <p>
-          Your personal information and documents are handled securely
-          throughout the application process.
+      <!-- STEP 1: PERSONAL INFORMATION -->
+      <section class="form-step" *ngIf="step === 1">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-number">STEP 01</span>
+            <h2>Personal Information</h2>
+            <p>Enter your personal identification details.</p>
+          </div>
+          <span class="section-icon">01</span>
+        </div>
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>First Name <span>*</span></label>
+            <input type="text"
+                   [(ngModel)]="firstName"
+                   placeholder="Enter first name"
+                   [class.invalid]="fieldErrors['firstName']">
+            <small class="field-error"
+                   *ngIf="fieldErrors['firstName']">
+              {{ fieldErrors['firstName'] }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Middle Name</label>
+            <input type="text"
+                   [(ngModel)]="middleName"
+                   placeholder="Enter middle name">
+          </div>
+
+          <div class="form-group">
+            <label>Last Name <span>*</span></label>
+            <input type="text"
+                   [(ngModel)]="lastName"
+                   placeholder="Enter last name"
+                   [class.invalid]="fieldErrors['lastName']">
+            <small class="field-error"
+                   *ngIf="fieldErrors['lastName']">
+              {{ fieldErrors['lastName'] }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Date of Birth <span>*</span></label>
+            <input type="date"
+                   [(ngModel)]="dateOfBirth"
+                   [class.invalid]="fieldErrors['dateOfBirth']">
+            <small class="field-error"
+                   *ngIf="fieldErrors['dateOfBirth']">
+              {{ fieldErrors['dateOfBirth'] }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Nationality <span>*</span></label>
+            <select [(ngModel)]="nationality">
+              <option value="Kenyan">🇰🇪 Kenyan</option>
+              <option value="Ugandan">🇺🇬 Ugandan</option>
+              <option value="Tanzanian">🇹🇿 Tanzanian</option>
+              <option value="Rwandan">🇷🇼 Rwandan</option>
+              <option value="Burundian">🇧🇮 Burundian</option>
+              <option value="South Sudanese">🇸🇸 South Sudanese</option>
+              <option value="Ethiopian">🇪🇹 Ethiopian</option>
+              <option value="Somali">🇸🇴 Somali</option>
+              <option value="Nigerian">🇳🇬 Nigerian</option>
+              <option value="Ghanaian">🇬🇭 Ghanaian</option>
+              <option value="South African">🇿🇦 South African</option>
+              <option value="British">🇬🇧 British</option>
+              <option value="American">🇺🇸 American</option>
+              <option value="Indian">🇮🇳 Indian</option>
+              <option value="Chinese">🇨🇳 Chinese</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Gender <span>*</span></label>
+            <select [(ngModel)]="gender"
+                    [class.invalid]="fieldErrors['gender']">
+              <option value="">Select gender</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+            </select>
+            <small class="field-error"
+                   *ngIf="fieldErrors['gender']">
+              {{ fieldErrors['gender'] }}
+            </small>
+          </div>
+
+          <div class="form-group full-width">
+            <label>National ID Number <span>*</span></label>
+            <input type="text"
+                   inputmode="numeric"
+                   maxlength="9"
+                   [(ngModel)]="identificationNumber"
+                   (ngModelChange)="onIdentificationNumberChange($event)"
+                   placeholder="Enter your 9-digit National ID"
+                   [class.invalid]="fieldErrors['identificationNumber']">
+            <small class="field-error"
+                   *ngIf="fieldErrors['identificationNumber']">
+              {{ fieldErrors['identificationNumber'] }}
+            </small>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- STEP 2: CONTACT INFORMATION -->
+      <section class="form-step" *ngIf="step === 2">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-number">STEP 02</span>
+            <h2>Contact Information</h2>
+            <p>Provide your contact details and location.</p>
+          </div>
+          <span class="section-icon">02</span>
+        </div>
+
+        <div class="form-grid">
+
+          <div class="form-group full-width">
+            <label>Email Address <span>*</span></label>
+            <input type="email"
+                   [(ngModel)]="email"
+                   (ngModelChange)="onEmailChange()"
+                   placeholder="example@email.com"
+                   [class.invalid]="fieldErrors['email']">
+            <small class="field-error"
+                   *ngIf="fieldErrors['email']">
+              {{ fieldErrors['email'] }}
+            </small>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Phone Number <span>*</span></label>
+
+            <div class="phone-group"
+                 [class.invalid-group]="fieldErrors['phone']">
+
+              <select [(ngModel)]="countryCode"
+                      (ngModelChange)="onPhoneChange()">
+                <option *ngFor="let country of countryCodes"
+                        [value]="country.code">
+                  {{ country.label }} {{ country.code }}
+                </option>
+              </select>
+
+              <input type="tel"
+                     inputmode="numeric"
+                     [(ngModel)]="phone"
+                     (ngModelChange)="onPhoneChange()"
+                     [maxlength]="selectedCountry?.digits || 9"
+                     placeholder="712345678">
+            </div>
+
+            <small class="field-error"
+                   *ngIf="fieldErrors['phone']">
+              {{ fieldErrors['phone'] }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>County <span>*</span></label>
+            <select [(ngModel)]="county"
+                    (ngModelChange)="onCountyChange()"
+                    [class.invalid]="fieldErrors['county']">
+              <option value="">Select county</option>
+              <option *ngFor="let item of counties"
+                      [value]="item.name">
+                {{ item.name }}
+              </option>
+            </select>
+            <small class="field-error"
+                   *ngIf="fieldErrors['county']">
+              {{ fieldErrors['county'] }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Town <span>*</span></label>
+            <select [(ngModel)]="town"
+                    [disabled]="!county"
+                    [class.invalid]="fieldErrors['town']">
+              <option value="">Select town</option>
+              <option *ngFor="let item of availableTowns"
+                      [value]="item">
+                {{ item }}
+              </option>
+            </select>
+            <small class="field-error"
+                   *ngIf="fieldErrors['town']">
+              {{ fieldErrors['town'] }}
+            </small>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- STEP 3: SECURITY -->
+      <section class="form-step" *ngIf="step === 3">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-number">STEP 03</span>
+            <h2>Account Security</h2>
+            <p>Create a secure password for your account.</p>
+          </div>
+          <span class="section-icon">03</span>
+        </div>
+
+        <div class="form-grid">
+
+          <div class="form-group full-width">
+            <label>Password <span>*</span></label>
+
+            <div class="password-wrapper"
+                 [class.invalid-group]="fieldErrors['password']">
+
+              <input [type]="showPassword ? 'text' : 'password'"
+                     [(ngModel)]="password"
+                     placeholder="Create password">
+
+              <button type="button"
+                      class="password-toggle"
+                      (click)="showPassword = !showPassword">
+                {{ showPassword ? 'Hide' : 'Show' }}
+              </button>
+
+            </div>
+
+            <small class="field-error"
+                   *ngIf="fieldErrors['password']">
+              {{ fieldErrors['password'] }}
+            </small>
+
+            <small class="field-hint">
+              Minimum 8 characters, including at least one letter and one number.
+            </small>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Confirm Password <span>*</span></label>
+
+            <div class="password-wrapper"
+                 [class.invalid-group]="fieldErrors['confirmPassword']">
+
+              <input [type]="showConfirmPassword ? 'text' : 'password'"
+                     [(ngModel)]="confirmPassword"
+                     placeholder="Confirm password">
+
+              <button type="button"
+                      class="password-toggle"
+                      (click)="showConfirmPassword = !showConfirmPassword">
+                {{ showConfirmPassword ? 'Hide' : 'Show' }}
+              </button>
+
+            </div>
+
+            <small class="field-error"
+                   *ngIf="fieldErrors['confirmPassword']">
+              {{ fieldErrors['confirmPassword'] }}
+            </small>
+          </div>
+
+        </div>
+
+        <div class="security-note">
+          <span>🔒</span>
+          Your password is securely encrypted and protected.
+        </div>
+
+      </section>
+
+      <!-- STEP 4: DOCUMENTS -->
+      <section class="form-step" *ngIf="step === 4">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-number">STEP 04</span>
+            <h2>Documents & KYC</h2>
+            <p>Upload the documents required for verification.</p>
+          </div>
+          <span class="section-icon">04</span>
+        </div>
+
+        <div class="document-list">
+
+          <!-- NATIONAL ID -->
+          <div class="document-card">
+            <div class="document-info">
+              <div class="document-icon">ID</div>
+              <div>
+                <h3>National ID Copy <span>*</span></h3>
+                <p>Upload a clear copy of your National ID.</p>
+              </div>
+            </div>
+
+            <input type="file"
+                   id="idUpload"
+                   accept=".pdf,.png,.jpg,.jpeg"
+                   hidden
+                   (change)="onFileSelected($event, 'id')">
+
+            <label for="idUpload" class="upload-btn">
+              Choose File
+            </label>
+
+            <div class="selected-file" *ngIf="idDocument">
+              <span>{{ getFileName(idDocument) }}</span>
+              <button type="button"
+                      (click)="removeDocument('id')">✕</button>
+            </div>
+          </div>
+
+          <!-- KRA -->
+          <div class="document-card">
+            <div class="document-info">
+              <div class="document-icon">KRA</div>
+              <div>
+                <h3>KRA PIN Certificate <span>*</span></h3>
+                <p>Upload your KRA PIN certificate.</p>
+              </div>
+            </div>
+
+            <input type="file"
+                   id="kraUpload"
+                   accept=".pdf,.png,.jpg,.jpeg"
+                   hidden
+                   (change)="onFileSelected($event, 'kra')">
+
+            <label for="kraUpload" class="upload-btn">
+              Choose File
+            </label>
+
+            <div class="selected-file" *ngIf="kraDocument">
+              <span>{{ getFileName(kraDocument) }}</span>
+              <button type="button"
+                      (click)="removeDocument('kra')">✕</button>
+            </div>
+          </div>
+
+          <!-- PASSPORT PHOTO -->
+          <div class="document-card">
+            <div class="document-info">
+              <div class="document-icon">IMG</div>
+              <div>
+                <h3>Passport Photo <span>*</span></h3>
+                <p>Upload a recent passport-sized photograph.</p>
+              </div>
+            </div>
+
+            <input type="file"
+                   id="photoUpload"
+                   accept=".png,.jpg,.jpeg"
+                   hidden
+                   (change)="onFileSelected($event, 'photo')">
+
+            <label for="photoUpload" class="upload-btn">
+              Choose File
+            </label>
+
+            <div class="selected-file" *ngIf="passportPhoto">
+              <span>{{ getFileName(passportPhoto) }}</span>
+              <button type="button"
+                      (click)="removeDocument('photo')">✕</button>
+            </div>
+          </div>
+
+          <!-- PROOF OF INCOME -->
+          <div class="document-card">
+            <div class="document-info">
+              <div class="document-icon">DOC</div>
+              <div>
+                <h3>Proof of Income</h3>
+                <p>Optional supporting income document.</p>
+              </div>
+            </div>
+
+            <input type="file"
+                   id="incomeUpload"
+                   accept=".pdf,.png,.jpg,.jpeg"
+                   hidden
+                   (change)="onFileSelected($event, 'income')">
+
+            <label for="incomeUpload" class="upload-btn">
+              Choose File
+            </label>
+
+            <div class="selected-file" *ngIf="incomeDocument">
+              <span>{{ getFileName(incomeDocument) }}</span>
+              <button type="button"
+                      (click)="removeDocument('income')">✕</button>
+            </div>
+          </div>
+
+          <!-- EMPLOYMENT LETTER -->
+          <div class="document-card">
+            <div class="document-info">
+              <div class="document-icon">DOC</div>
+              <div>
+                <h3>Employment Letter</h3>
+                <p>Optional employment confirmation document.</p>
+              </div>
+            </div>
+
+            <input type="file"
+                   id="employmentUpload"
+                   accept=".pdf,.png,.jpg,.jpeg"
+                   hidden
+                   (change)="onFileSelected($event, 'employment')">
+
+            <label for="employmentUpload" class="upload-btn">
+              Choose File
+            </label>
+
+            <div class="selected-file" *ngIf="employmentLetter">
+              <span>{{ getFileName(employmentLetter) }}</span>
+              <button type="button"
+                      (click)="removeDocument('employment')">✕</button>
+            </div>
+          </div>
+
+        </div>
+
+        <p class="upload-limit">
+          Maximum file size: 5MB per document.
         </p>
-      </div>
-    </div>
 
-    <!-- RETURN HOME -->
-    <button type="button" class="home-btn" (click)="goHome()">
-      ← Return to home
-    </button>
+      </section>
+
+      <!-- STEP 5: REVIEW -->
+      <section class="form-step" *ngIf="step === 5">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-number">STEP 05</span>
+            <h2>Review Your Application</h2>
+            <p>Confirm that your information is correct.</p>
+          </div>
+          <span class="section-icon">05</span>
+        </div>
+
+        <div class="review-card">
+
+          <div class="review-heading">
+            <h3>Personal Information</h3>
+            <button type="button" (click)="editStep(1)">Edit</button>
+          </div>
+
+          <div class="review-grid">
+            <div>
+              <small>Full Name</small>
+              <strong>{{ fullName }}</strong>
+            </div>
+
+            <div>
+              <small>Date of Birth</small>
+              <strong>{{ dateOfBirth }}</strong>
+            </div>
+
+            <div>
+              <small>Nationality</small>
+              <strong>{{ nationality }}</strong>
+            </div>
+
+            <div>
+              <small>Gender</small>
+              <strong>{{ gender }}</strong>
+            </div>
+
+            <div>
+              <small>National ID</small>
+              <strong>{{ identificationNumber }}</strong>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="review-card">
+
+          <div class="review-heading">
+            <h3>Contact Information</h3>
+            <button type="button" (click)="editStep(2)">Edit</button>
+          </div>
+
+          <div class="review-grid">
+            <div>
+              <small>Email</small>
+              <strong>{{ email }}</strong>
+            </div>
+
+            <div>
+              <small>Phone</small>
+              <strong>{{ fullInternationalPhone }}</strong>
+            </div>
+
+            <div>
+              <small>County</small>
+              <strong>{{ county }}</strong>
+            </div>
+
+            <div>
+              <small>Town</small>
+              <strong>{{ town }}</strong>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="review-card">
+
+          <div class="review-heading">
+            <h3>Account Security</h3>
+            <button type="button" (click)="editStep(3)">Edit</button>
+          </div>
+
+          <div class="review-grid">
+            <div>
+              <small>Password</small>
+              <strong>••••••••••</strong>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="review-card">
+
+          <div class="review-heading">
+            <h3>KYC Documents</h3>
+            <button type="button" (click)="editStep(4)">Edit</button>
+          </div>
+
+          <div class="review-documents">
+            <p>
+              <span>National ID</span>
+              <strong>{{ idDocument ? 'Uploaded ✓' : 'Not uploaded' }}</strong>
+            </p>
+
+            <p>
+              <span>KRA PIN Certificate</span>
+              <strong>{{ kraDocument ? 'Uploaded ✓' : 'Not uploaded' }}</strong>
+            </p>
+
+            <p>
+              <span>Passport Photo</span>
+              <strong>{{ passportPhoto ? 'Uploaded ✓' : 'Not uploaded' }}</strong>
+            </p>
+
+            <p>
+              <span>Proof of Income</span>
+              <strong>{{ incomeDocument ? 'Uploaded ✓' : 'Not provided' }}</strong>
+            </p>
+
+            <p>
+              <span>Employment Letter</span>
+              <strong>{{ employmentLetter ? 'Uploaded ✓' : 'Not provided' }}</strong>
+            </p>
+          </div>
+
+        </div>
+
+        <div class="review-notice">
+          <span>✓</span>
+          Please ensure all information and uploaded documents are correct before submitting.
+        </div>
+
+      </section>
+
+      <!-- NAVIGATION -->
+      <div class="form-actions" *ngIf="!successMessage">
+
+        <button type="button"
+                class="secondary-btn"
+                *ngIf="step > 1"
+                (click)="previousStep()"
+                [disabled]="loading">
+          Back
+        </button>
+
+        <button type="button"
+                class="primary-btn"
+                *ngIf="step < 5"
+                (click)="nextStep()"
+                [disabled]="loading">
+
+          <span *ngIf="!loading">Continue</span>
+          <span *ngIf="loading">Checking...</span>
+        </button>
+
+        <button type="button"
+                class="primary-btn submit-btn"
+                *ngIf="step === 5"
+                (click)="submitRegistration()"
+                [disabled]="loading">
+
+          <span *ngIf="!loading">Submit Application</span>
+          <span *ngIf="loading">Processing...</span>
+        </button>
+
+      </div>
+
+    </ng-container>
+
+    <!-- OTP VERIFICATION -->
+    <section class="otp-section"
+             *ngIf="otpStage && !successMessage">
+
+      <div class="otp-icon">✉</div>
+
+      <h2>Verify Your Email</h2>
+
+      <p>
+        We have sent a six-digit verification code to
+        <strong>{{ email }}</strong>.
+      </p>
+
+      <label class="otp-label">Enter verification code</label>
+
+      <div class="otp-inputs">
+
+        <input *ngFor="let digit of otpDigits; let i = index"
+               [id]="'otp-' + i"
+               type="text"
+               inputmode="numeric"
+               maxlength="1"
+               autocomplete="one-time-code"
+               [value]="otpDigits[i]"
+               (input)="onOtpInput(i, $any($event.target).value, $any($event.target))"
+               (keydown)="onOtpKeydown(i, $event)"
+               (paste)="onOtpPaste($event)"
+               [class.invalid]="errorMessage">
+
+      </div>
+
+      <button type="button"
+              class="primary-btn verify-btn"
+              (click)="verifyEmailOtp()"
+              [disabled]="loading || !otpComplete">
+
+        <span *ngIf="!loading">Verify & Complete Registration</span>
+        <span *ngIf="loading">Verifying...</span>
+
+      </button>
+
+      <div class="resend-section">
+        <span>Didn't receive the code?</span>
+
+        <button type="button"
+                (click)="resendOtp()"
+                [disabled]="resendCooldown > 0 || loading">
+
+          {{ resendCooldown > 0
+          ? 'Resend in ' + resendCooldown + 's'
+          : 'Resend Code' }}
+
+        </button>
+      </div>
+
+      <p class="otp-note">
+        Check your spam or junk folder if the email does not appear in your inbox.
+      </p>
+
+    </section>
+
+    <!-- FOOTER -->
+    <div class="register-footer">
+      <button type="button" (click)="goHome()">
+        ← Return to Home
+      </button>
+
+      <span>© KCB Bank · Secure Digital Banking</span>
+    </div>
 
   </div>
 </div>

@@ -1,3 +1,4 @@
+
 .login-page {
   min-height: 100vh;
   background: #f5f7f9;
@@ -37,14 +38,16 @@ label {
 }
 
 input {
+  width: 100%;
   padding: 13px;
   margin-bottom: 18px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 15px;
+  box-sizing: border-box;
 }
 
-form button {
+form > button[type="submit"] {
   padding: 13px;
   background: #005baa;
   color: white;
@@ -52,6 +55,11 @@ form button {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+}
+
+form > button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .home-btn {
@@ -63,4 +71,34 @@ form button {
   border: 1px solid #005baa;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field input {
+  padding-right: 65px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #16834a;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 5px;
+}
+
+.error-message {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 10px;
 }

@@ -11,7 +11,7 @@ import { KycComponent } from './kyc/kyc.component';
 import { ProfileComponent } from './profile/profile.component';
 
 import { ReviewerComponent } from './reviewer/reviewer.component';
-import { ReviewerLoginComponent } from './reviewer-login/reviewer-login.component';
+import { ReviewerLoginComponent } from './reviewer-login/reviewer.login.component';
 
 import { authGuard } from './auth.guard';
 

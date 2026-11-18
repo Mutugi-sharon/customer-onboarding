@@ -16,8 +16,8 @@ interface StaffLoginResponse {
   selector: 'app-reviewer-login',
   standalone: true,
   imports: [FormsModule, CommonModule],
-  templateUrl: './reviewer-login.component.html',
-  styleUrl: './reviewer-login.component.css',
+  templateUrl: './reviewer.login.component.html',
+  styleUrl: './reviewer.login.component.css',
 })
 export class ReviewerLoginComponent {
   staffId = '';

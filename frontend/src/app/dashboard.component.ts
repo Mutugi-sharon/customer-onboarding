@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -20,11 +21,12 @@ export class DashboardComponent implements OnInit {
   currentHour = new Date().getHours();
 
   activeSection = 'top';
+  showAccountNumber = false;
 
   constructor(
     private router: Router,
     private api: ApiService,
-    private auth: AuthService
+    public auth: AuthService
   ) {}
 
   get greeting(): string {
@@ -40,65 +42,121 @@ export class DashboardComponent implements OnInit {
   }
 
   get applicationStatus(): string {
-    return this.applicant?.application_status ||
-      this.applicant?.applicationStatus ||
-      'In Progress';
+    return this.applicant?.status || 'Pending';
   }
 
   get kycStatus(): string {
-    return this.applicant?.kyc_status ||
-      this.applicant?.kycStatus ||
-      'Pending';
+    return this.applicant?.kyc_status || 'Pending';
   }
 
-  get accountNumber(): string | null {
+  get accountNumber(): string {
     return this.applicant?.account_number ||
       this.applicant?.accountNumber ||
-      null;
+      '';
   }
 
   get applicationRejectionReason(): string {
-    return this.applicant?.application_rejection_reason ||
-      this.applicant?.applicationRejectionReason ||
-      'No rejection reason was provided.';
+    return this.applicant?.rejection_reason ||
+      this.applicant?.rejectionReason ||
+      '';
   }
 
   get isApplicationRejected(): boolean {
-    return this.applicationStatus.trim().toUpperCase() === 'REJECTED';
+    const status = this.applicationStatus.toLowerCase();
+
+    return status === 'rejected' || status === 'declined';
   }
 
   get kycRejectionReason(): string {
     return this.applicant?.kyc_rejection_reason ||
-      this.applicant?.rejection_reason ||
-      this.applicant?.kyc_remarks ||
-      'No rejection reason was provided.';
+      this.applicant?.kycRejectionReason ||
+      '';
+  }
+
+  get isAccepted(): boolean {
+    const status = this.applicationStatus.toLowerCase();
+
+    return status === 'approved' || status === 'accepted';
+  }
+
+  get isRejected(): boolean {
+    const status = this.applicationStatus.toLowerCase();
+
+    return status === 'rejected' || status === 'declined';
+  }
+
+  get statusDescription(): string {
+    const status = this.applicationStatus.toLowerCase();
+
+    if (status === 'approved' || status === 'accepted') {
+      return 'Your application has been accepted.';
+    }
+
+    if (status === 'rejected' || status === 'declined') {
+      return 'Your application was not approved.';
+    }
+
+    if (status === 'pending') {
+      return 'Your application is being reviewed.';
+    }
+
+    return 'Your application status will be updated here.';
   }
 
   ngOnInit(): void {
-    this.name = this.auth.name || 'Applicant';
 
-    const id = this.auth.id;
-
-    if (!id) {
-      this.loading = false;
+    if (!this.auth.isLoggedIn() || !this.auth.id) {
       this.router.navigate(['/login']);
       return;
     }
 
+    this.name = this.auth.name || 'Applicant';
+
+    const id = this.auth.id;
+
     this.api.getApplicant(id).subscribe({
-      next: (data) => {
-        this.applicant = data;
+
+      next: (res: any) => {
+        this.applicant = res;
+
+        if (res?.full_name) {
+          this.name = res.full_name;
+        } else if (res?.fullName) {
+          this.name = res.fullName;
+        }
+
         this.loading = false;
       },
-      error: (error) => {
-        console.error('Failed to load applicant:', error);
+
+      error: (err: any) => {
+        console.error('Unable to load applicant details:', err);
         this.loading = false;
       }
+
     });
   }
 
   selectSection(section: string): void {
     this.activeSection = section;
+  }
+
+  toggleAccountNumber(): void {
+    this.showAccountNumber = !this.showAccountNumber;
+  }
+
+  scrollToSection(sectionId: string): void {
+    const section = document.getElementById(sectionId);
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+
+  viewNotifications(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   logout(): void {
