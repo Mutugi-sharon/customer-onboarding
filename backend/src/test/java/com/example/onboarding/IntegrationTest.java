@@ -1,3 +1,4 @@
+
 package com.example.onboarding;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,19 +8,19 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Testcontainers
 public abstract class IntegrationTest {
 
-    @Container
     @ServiceConnection
     static final PostgreSQLContainer postgres =
             new PostgreSQLContainer("postgres:17");
+
+    static {
+        postgres.start();
+    }
 
     @Autowired
     protected MockMvc mvc;
