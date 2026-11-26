@@ -2,7 +2,7 @@
 package com.example.onboarding.security;
 
 import com.example.onboarding.IntegrationTest;
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,7 +15,7 @@ class ApplicantSchemaMigrationTest extends IntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Disabled("Must-fix: enabled by P2-05")
+
     @Test
     void migrations_createEveryColumnTheCodeUses() {
 
